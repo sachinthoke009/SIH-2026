@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartNAWI - OIML R-76 Test Report Generation System | DoCA, Govt of India</title>
+  <!-- Tailwind CSS via CDN for instant high-fidelity styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @media print {
+      body { background: white; color: black; }
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      .page-break { page-break-before: always; }
+    }
+    .print-only { display: none; }
+    .badge-pass { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .badge-fail { background-color: #ffe4e6; color: #9f1239; border: 1px solid #fecdd3; }
+    .badge-inc { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- TOP NATIONAL EMBLEM & GOVT HEADER (no-print) -->
+  <header class="bg-slate-900 text-white border-b-4 border-amber-500 no-print">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-white text-slate-900 p-2 rounded-lg font-bold text-xl flex items-center justify-center w-10 h-10 shadow">
+          ⚖️
+        </div>
+        <div>
+          <div class="text-xs uppercase tracking-widest text-amber-400 font-semibold">Government of India · Ministry of Consumer Affairs</div>
+          <h1 class="text-lg font-bold tracking-tight">Department of Consumer Affairs (DoCA) — Legal Metrology Division</h1>
+          <p class="text-xs text-slate-300">OIML R 76 NAWI Type Evaluation & Automated Test Report System</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-xs">
+          <span class="text-slate-400">Current Role:</span>
+          <select id="roleSelector" class="bg-slate-900 text-amber-400 font-semibold ml-1 focus:outline-none cursor-pointer" onchange="switchRole(this.value)">
+            <option value="tester">🔬 Tester (Scientific Officer)</option>
+            <option value="reviewer">👔 Reviewer (Approving Officer)</option>
+            <option value="admin">⚙️ Admin (Director)</option>
+          </select>
+        </div>
+        <button onclick="loadSampleData('pass')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1.5 rounded font-medium transition shadow">
+          <i class="fa-solid fa-folder-open mr-1"></i> Demo Pass Case
+        </button>
+        <button onclick="loadSampleData('fail')" class="bg-rose-600 hover:bg-rose-500 text-white text-xs px-3 py-1.5 rounded font-medium transition shadow">
+          <i class="fa-solid fa-triangle-exclamation mr-1"></i> Demo Fail Case
+        </button>
+      </div>
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="bg-slate-800 border-t border-slate-700 px-4">
+      <div class="max-w-7xl mx-auto flex overflow-x-auto gap-1 text-sm">
+        <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-btn py-2.5 px-4 font-medium border-b-2 border-amber-500 text-amber-400 flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie"></i> Executive Dashboard
+        </button>
+        <button onclick="showTab('generator')" id="tab-generator" class="tab-btn py-2.5 px-4 font-medium border-b-2 border-transparent text-slate-300 hover:text-white flex items-center gap-2">
+          <i class="fa-solid fa-file-signature"></i> Test Report Workspace
+        </button>
+        <button onclick="showTab('repository')" id="tab-repository" class="tab-btn py-2.5 px-4 font-medium border-b-2 border-transparent text-slate-300 hover:text-white flex items-center gap-2">
+          <i class="fa-solid fa-database"></i> Report Repository & Search
+        </button>
+        <button onclick="showTab('rules')" id="tab-rules" class="tab-btn py-2.5 px-4 font-medium border-b-2 border-transparent text-slate-300 hover:text-white flex items-center gap-2">
+          <i class="fa-solid fa-sliders"></i> OIML R 76 Rule Config
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 no-print">
+
+    <!-- 1. DASHBOARD VIEW -->
+    <div id="view-dashboard" class="space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">NAWI Type Evaluation Monitoring Dashboard</h2>
+          <p class="text-sm text-slate-500">Automated Compliance Verification as per OIML Recommendation R 76-1:2006 & Legal Metrology Rules, 2011</p>
+        </div>
+        <button onclick="showTab('generator')" class="bg-teal-700 hover:bg-teal-800 text-white font-medium text-sm px-4 py-2 rounded-lg shadow flex items-center gap-2">
+          <i class="fa-solid fa-plus"></i> Create New NAWI Test Report
+        </button>
+      </div>
+
+      <!-- METRIC CARDS -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase">Total Reports</div>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="stat-total">4</div>
+          <div class="text-[11px] text-slate-400 mt-1">Evaluated in RRSL</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-emerald-600 uppercase">Compliant (PASS)</div>
+          <div class="text-2xl font-black text-emerald-700 mt-1" id="stat-pass">2</div>
+          <div class="text-[11px] text-emerald-600 mt-1">Conforms to R 76</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-rose-600 uppercase">Non-Compliant (FAIL)</div>
+          <div class="text-2xl font-black text-rose-700 mt-1" id="stat-fail">1</div>
+          <div class="text-[11px] text-rose-600 mt-1">MPE / Eccentricity exceeded</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-amber-600 uppercase">In Progress</div>
+          <div class="text-2xl font-black text-amber-700 mt-1" id="stat-progress">1</div>
+          <div class="text-[11px] text-amber-600 mt-1">Under testing</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-violet-600 uppercase">Integrity Flags</div>
+          <div class="text-2xl font-black text-violet-700 mt-1" id="stat-flags">1</div>
+          <div class="text-[11px] text-violet-600 mt-1">Ghost Mode alerts</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-teal-600 uppercase">Active Rule Set</div>
+          <div class="text-sm font-bold text-teal-800 mt-2">OIML R 76-1</div>
+          <div class="text-[11px] text-slate-500">Edition 2006 (E)</div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD CHARTS & TABLES -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- RECENT REPORTS -->
+        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-slate-900 text-base">Recent NAWI Type Evaluation Reports</h3>
+            <button onclick="showTab('repository')" class="text-xs font-semibold text-teal-700 hover:underline">View All Repository →</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-xs font-semibold text-slate-500 uppercase border-b border-slate-200">
+                <tr>
+                  <th class="py-2.5 px-3">Report Number</th>
+                  <th class="py-2.5 px-3">Manufacturer & Model</th>
+                  <th class="py-2.5 px-3">Class & Capacity</th>
+                  <th class="py-2.5 px-3">Status</th>
+                  <th class="py-2.5 px-3">Verdict</th>
+                  <th class="py-2.5 px-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-reports-list" class="divide-y divide-slate-100">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- COMPLIANCE BREAKDOWN & INTEGRITY GUARD -->
+        <div class="space-y-6">
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+            <h3 class="font-bold text-slate-900 text-base mb-3">Overall Compliance Outcome</h3>
+            <div class="space-y-3">
+              <div>
+                <div class="flex justify-between text-xs font-semibold mb-1">
+                  <span class="text-emerald-700">PASS (Compliant)</span>
+                  <span>50%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-emerald-500 h-full w-1/2"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-xs font-semibold mb-1">
+                  <span class="text-rose-700">FAIL (Non-Compliant)</span>
+                  <span>25%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-rose-500 h-full w-1/4"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-xs font-semibold mb-1">
+                  <span class="text-amber-700">INCOMPLETE</span>
+                  <span>25%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-amber-400 h-full w-1/4"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-5 p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900">
+              <div class="font-bold flex items-center gap-1">
+                <i class="fa-solid fa-ghost text-amber-600"></i> Ghost Mode – Integrity Guard Alert
+              </div>
+              <p class="mt-1 text-amber-800">Automated audit detected zero variance or pattern copying in 1 report. Mandatory review flag assigned.</p>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 text-white rounded-xl shadow-sm p-5 border border-slate-800">
+            <div class="text-xs uppercase text-amber-400 font-bold tracking-wider">OIML R 76 Legal Metrology Core</div>
+            <div class="text-sm font-semibold mt-1">Automatic Permissible Error (MPE) Calculation</div>
+            <p class="text-xs text-slate-300 mt-2">The calculation engine dynamically evaluates test loads against MPE bands (&plusmn;0.5e, &plusmn;1.0e, &plusmn;1.5e) for Classes I, II, III, IIII as prescribed under Table 6 of OIML R 76-1.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 2. TEST REPORT GENERATOR WORKSPACE VIEW -->
+    <div id="view-generator" class="hidden space-y-6">
+      
+      <!-- TOP CONTROL CARD -->
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="bg-teal-100 text-teal-800 font-mono text-xs font-bold px-2.5 py-1 rounded-md" id="active-report-no">RRSL/NAWI/2025/0041</span>
+            <span class="badge-pass text-xs font-bold px-2.5 py-1 rounded-full" id="active-verdict-badge">OVERALL: PASS</span>
+          </div>
+          <h2 class="text-lg font-bold text-slate-900 mt-1" id="active-instrument-title">Essae-Teraoka DS-252 — Electronic Counter Scale</h2>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="evaluateAllTests()" class="bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5">
+            <i class="fa-solid fa-calculator"></i> Evaluate All & Save
+          </button>
+          <button onclick="previewReportPrint()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5">
+            <i class="fa-solid fa-print"></i> Print Report / PDF
+          </button>
+          <button onclick="exportDocxMock()" class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5">
+            <i class="fa-solid fa-file-word"></i> Export MS Word
+          </button>
+          <button onclick="digitalSignModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5">
+            <i class="fa-solid fa-signature"></i> Digital Sign (SHA-256)
+          </button>
+        </div>
+      </div>
+
+      <!-- WORKSPACE TABS & SECTIONS -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        
+        <!-- SIDEBAR TEST NAVIGATION CATALOG -->
+        <div class="space-y-2">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-500 px-1">Instrument Specs & Tests</div>
+          
+          <button onclick="showSection('sec-specs')" id="btn-sec-specs" class="side-nav-btn w-full text-left p-3 rounded-lg border border-teal-600 bg-teal-50 font-medium text-sm text-slate-900 flex items-center justify-between">
+            <span>📋 1. Specs & Lab Setup</span>
+            <span class="text-xs text-teal-700 font-bold"><i class="fa-solid fa-check"></i></span>
+          </button>
+
+          <button onclick="showSection('sec-weighing')" id="btn-sec-weighing" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
+            <span>⚖️ 2. Weighing Accuracy</span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-weighing">PASS</span>
+          </button>
+
+          <button onclick="showSection('sec-repeatability')" id="btn-sec-repeatability" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
+            <span>🔄 3. Repeatability Test</span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-repeatability">PASS</span>
+          </button>
+
+          <button onclick="showSection('sec-eccentricity')" id="btn-sec-eccentricity" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
+            <span>📐 4. Eccentric Loading</span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-eccentricity">PASS</span>
+          </button>
+
+          <button onclick="showSection('sec-tare')" id="btn-sec-tare" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
+            <span>📦 5. Tare Weighing</span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-tare">PASS</span>
+          </button>
+
+          <button onclick="showSection('sec-discrimination')" id="btn-sec-discrimination" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
+            <span>🔍 6. Discrimination (1.4d)</span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-discrimination">PASS</span>
+          </button>
+
+          <button onclick="showSection('sec-zero')" id="btn-sec-zero" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
+            <span>🎯 7. Zero-Setting Devices</span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-zero">PASS</span>
+          </button>
+
+          <button onclick="showSection('sec-warmup')" id="btn-sec-warmup" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
+            <span>⏱️ 8. Warm-Up Time</span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-warmup">PASS</span>
+          </button>
+
+          <button onclick="showSection('sec-temp')" id="btn-sec-temp" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
+            <span>🌡️ 9. Static Temperature</span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-temp">PASS</span>
+          </button>
+
+          <button onclick="showSection('sec-voltage')" id="btn-sec-voltage" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
+            <span>⚡ 10. Mains Voltage Drift</span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-voltage">PASS</span>
+          </button>
+
+          <button onclick="showSection('sec-span')" id="btn-sec-span" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
+            <span>📈 11. Span Stability</span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-span">PASS</span>
+          </button>
+        </div>
+
+        <!-- MAIN FORM PANEL -->
+        <div class="lg:col-span-3 bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-6">
+
+          <!-- SECTION 1: SPECS & LAB SETUP -->
+          <div id="sec-specs" class="test-sec space-y-5">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-teal-700"></i> Instrument Specifications & Laboratory Parameters
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Manufacturer Name</label>
+                <input type="text" id="inp-manufacturer" value="Essae-Teraoka Pvt. Ltd." class="w-full border rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-teal-500">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Instrument Model</label>
+                <input type="text" id="inp-model" value="DS-252" class="w-full border rounded px-3 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Serial Number</label>
+                <input type="text" id="inp-serial" value="ET-2025-014532" class="w-full border rounded px-3 py-1.5 text-sm">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Accuracy Class (OIML R 76)</label>
+                <select id="inp-class" onchange="validateClassificationRules()" class="w-full border rounded px-3 py-1.5 text-sm font-semibold bg-amber-50 border-amber-300">
+                  <option value="I">Class I (Special Accuracy)</option>
+                  <option value="II">Class II (High Accuracy)</option>
+                  <option value="III" selected>Class III (Medium Accuracy)</option>
+                  <option value="IIII">Class IIII (Ordinary Accuracy)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Max Capacity (Max)</label>
+                <div class="flex gap-2">
+                  <input type="number" step="any" id="inp-max" value="30" onchange="validateClassificationRules()" class="w-full border rounded px-3 py-1.5 text-sm font-semibold">
+                  <select id="inp-unit" onchange="validateClassificationRules()" class="border rounded px-2 py-1.5 text-sm">
+                    <option value="kg" selected>kg</option>
+                    <option value="g">g</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Min Capacity (Min)</label>
+                <input type="number" step="any" id="inp-min" value="0.2" onchange="validateClassificationRules()" class="w-full border rounded px-3 py-1.5 text-sm font-semibold">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Verification Interval (e)</label>
+                <input type="number" step="any" id="inp-e" value="0.01" onchange="validateClassificationRules()" class="w-full border rounded px-3 py-1.5 text-sm font-semibold">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Actual Scale Interval (d)</label>
+                <input type="number" step="any" id="inp-d" value="0.01" onchange="validateClassificationRules()" class="w-full border rounded px-3 py-1.5 text-sm font-semibold">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Testing Laboratory</label>
+                <input type="text" id="inp-lab" value="Regional Reference Standards Laboratory (RRSL), Bengaluru" class="w-full border rounded px-3 py-1.5 text-sm">
+              </div>
+            </div>
+
+            <!-- AUTOMATED OIML R 76 TABLE 3 RULE CHECK BOX -->
+            <div id="classification-rule-box" class="p-4 rounded-lg bg-teal-50 border border-teal-200 text-xs text-teal-900 space-y-1">
+              <div class="font-bold text-teal-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-check text-emerald-600"></i> OIML R 76 Table 3 Classification Rule Verification
+              </div>
+              <div id="rule-n-calc">Calculated scale intervals n = Max/e = 3000 (Permitted: 500 &le; n &le; 10,000 for Class III).</div>
+              <div id="rule-min-calc">Calculated lower cap limit Min &ge; 20e = 0.2 kg (Entered: 0.2 kg — PASS).</div>
+              <div id="rule-ed-calc">e/d = 1.0 (Digital indication requirement satisfied).</div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: WEIGHING ACCURACY -->
+          <div id="sec-weighing" class="test-sec hidden space-y-4">
+            <div class="flex items-center justify-between border-b pb-2">
+              <h3 class="text-lg font-bold text-slate-900">Weighing Performance & Accuracy Test</h3>
+              <button onclick="suggestWeighingLoads()" class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded font-semibold text-slate-700">
+                ⚡ Auto-Suggest OIML Loads
+              </button>
+            </div>
+            <p class="text-xs text-slate-500">Record observations for increasing and decreasing test loads. Error E = I - L. Maximum Permissible Error (MPE) calculated automatically based on load bands (0.5e, 1.0e, 1.5e).</p>
+            
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border-collapse">
+                <thead class="bg-slate-50 text-xs text-slate-600 uppercase border-b">
+                  <tr>
+                    <th class="p-2">Load (kg)</th>
+                    <th class="p-2">Indication &uarr;</th>
+                    <th class="p-2">Error &uarr;</th>
+                    <th class="p-2">Indication &darr;</th>
+                    <th class="p-2">Error &darr;</th>
+                    <th class="p-2">Permissible MPE</th>
+                    <th class="p-2 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbl-weighing-rows" class="divide-y divide-slate-100">
+                  <!-- Dynamic rows -->
+                </tbody>
+              </table>
+            </div>
+            <button onclick="addWeighingRow(0, 0, 0)" class="text-xs font-bold text-teal-700 hover:underline">+ Add Custom Load Row</button>
+          </div>
+
+          <!-- SECTION 3: REPEATABILITY -->
+          <div id="sec-repeatability" class="test-sec hidden space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Repeatability Test (Clause 3.6.1 / A.4.10)</h3>
+            <p class="text-xs text-slate-500">10 repeated weighings carried out at ~50% Max and 100% Max. Difference between maximum and minimum results (Max - Min) shall not exceed |MPE| for that load.</p>
+
+            <div class="space-y-4">
+              <div class="p-4 rounded-lg border border-slate-200 bg-slate-50 space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                  <span>Series 1: Load = 15 kg (50% Max) | MPE = &plusmn;0.01 kg</span>
+                  <span id="rep-status-1" class="badge-pass px-2 py-0.5 rounded">PASS (Spread: 0.01 kg &le; MPE)</span>
+                </div>
+                <div class="grid grid-cols-5 md:grid-cols-10 gap-2">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="15.01" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="15.01" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="15.01" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                </div>
+              </div>
+
+              <div class="p-4 rounded-lg border border-slate-200 bg-slate-50 space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                  <span>Series 2: Load = 30 kg (100% Max) | MPE = &plusmn;0.015 kg</span>
+                  <span id="rep-status-2" class="badge-pass px-2 py-0.5 rounded">PASS (Spread: 0.01 kg &le; MPE)</span>
+                </div>
+                <div class="grid grid-cols-5 md:grid-cols-10 gap-2">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="30.02" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="30.02" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OTHER TEST SECTIONS SUMMARY -->
+          <div id="sec-eccentricity" class="test-sec hidden space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Eccentric Loading (Corner Load Test)</h3>
+            <p class="text-xs text-slate-500">Apply load of 1/3 Max (10 kg) at 5 positions (1: Center, 2: Front-Left, 3: Front-Right, 4: Back-Right, 5: Back-Left).</p>
+            <div class="grid grid-cols-5 gap-3 text-center text-xs">
+              <div class="p-3 border rounded bg-slate-50">Pos 1 (Center)<br><input type="number" id="ecc-1" value="10.00" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 2 (FL)<br><input type="number" id="ecc-2" value="10.01" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 3 (FR)<br><input type="number" id="ecc-3" value="10.00" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 4 (BR)<br><input type="number" id="ecc-4" value="9.99" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 5 (BL)<br><input type="number" id="ecc-5" value="10.00" class="border w-full mt-1 text-center font-bold"></div>
+            </div>
+          </div>
+
+          <!-- SUMMARY AUTOMATED EVALUATION BOX -->
+          <div class="p-4 rounded-xl border border-slate-300 bg-slate-900 text-white space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Live Automated Evaluation Engine</div>
+              <div class="text-xs font-bold text-emerald-400">All 11 OIML R 76 Tests Evaluated</div>
+            </div>
+            <div class="text-sm font-semibold flex items-center gap-2">
+              <span>Overall Compliance:</span>
+              <span id="overall-status-text" class="text-emerald-400 font-bold">PASSED — Conforms to OIML R 76-1:2006</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 3. REPORT REPOSITORY VIEW -->
+    <div id="view-repository" class="hidden space-y-6">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Digital Test Report Repository</h2>
+          <p class="text-sm text-slate-500">Search and retrieve historical NAWI model approval reports</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <input type="text" id="repo-search" oninput="filterRepository()" placeholder="Search by manufacturer, model, report no..." class="border rounded-lg px-3 py-1.5 text-sm w-64">
+          <select id="repo-filter-status" onchange="filterRepository()" class="border rounded-lg px-3 py-1.5 text-sm">
+            <option value="all">All Statuses</option>
+            <option value="approved">Approved</option>
+            <option value="under_review">Under Review</option>
+            <option value="in_progress">In Progress</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-50 text-xs font-semibold text-slate-500 uppercase border-b">
+            <tr>
+              <th class="p-3">Report No.</th>
+              <th class="p-3">Manufacturer</th>
+              <th class="p-3">Model & Type</th>
+              <th class="p-3">Accuracy Class</th>
+              <th class="p-3">Capacity</th>
+              <th class="p-3">Status</th>
+              <th class="p-3">Verdict</th>
+              <th class="p-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="repo-rows" class="divide-y divide-slate-100">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- 4. OIML RULE CONFIG VIEW -->
+    <div id="view-rules" class="hidden space-y-6">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900">Configurable OIML R 76 Rule Sets</h2>
+        <p class="text-sm text-slate-500">Allows future recommendation updates without altering engine codebase (Admin Configuration)</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <h3 class="font-bold text-slate-900 border-b pb-2">Active Recommendation Rule Set</h3>
+          <div class="text-sm space-y-1">
+            <div><span class="font-semibold">Code:</span> OIML-R76-1</div>
+            <div><span class="font-semibold">Version:</span> 2006 (E)</div>
+            <div><span class="font-semibold">Title:</span> Non-automatic weighing instruments — Metrological & technical requirements</div>
+            <div><span class="font-semibold">MPE Factors:</span> Initial Verification (1.0x MPE), In-Service (2.0x MPE)</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <h3 class="font-bold text-slate-900 border-b pb-2">Future OIML Revision Support</h3>
+          <p class="text-xs text-slate-600">New recommendation editions published by OIML can be uploaded as JSON rule set configs into the database to update MPE limits, warm-up criteria, or temperature ranges dynamically.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+
+  <!-- PRINTABLE REPORT PREVIEW OVERLAY (FOR PDF & PRINT) -->
+  <div id="print-overlay" class="print-only p-8 bg-white max-w-4xl mx-auto font-sans text-slate-900 text-sm">
+    <div class="text-center border-b-2 border-slate-900 pb-4 mb-4">
+      <div class="text-xs uppercase font-bold text-slate-600">Government of India — Ministry of Consumer Affairs, Food & Public Distribution</div>
+      <div class="text-xl font-black uppercase tracking-wider text-slate-900 mt-1">Regional Reference Standards Laboratory (RRSL)</div>
+      <div class="text-xs text-slate-600">Legal Metrology Division · NABL Accredited ISO/IEC 17025:2017</div>
+      <div class="text-base font-bold text-teal-800 mt-2 border-t pt-2">TEST REPORT FOR TYPE EVALUATION OF NAWI (OIML R 76-1:2006)</div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 text-xs mb-6 border p-3 rounded bg-slate-50">
+      <div>
+        <span class="font-bold">Report Number:</span> <span id="pr-report-no">RRSL/NAWI/2025/0041</span><br>
+        <span class="font-bold">Manufacturer:</span> <span id="pr-mfr">Essae-Teraoka Pvt. Ltd.</span><br>
+        <span class="font-bold">Model / Serial:</span> <span id="pr-model">DS-252 / ET-2025-014532</span>
+      </div>
+      <div>
+        <span class="font-bold">Accuracy Class:</span> Class III<br>
+        <span class="font-bold">Max / Min / e / d:</span> 30 kg / 0.2 kg / 0.01 kg / 0.01 kg<br>
+        <span class="font-bold">Overall Verdict:</span> <span id="pr-verdict" class="font-bold text-emerald-700">COMPLIES WITH OIML R 76-1</span>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <h4 class="font-bold border-b pb-1 text-sm">Summary of Test Results</h4>
+      <table class="w-full text-xs text-left border border-collapse">
+        <thead class="bg-slate-100 border-b font-bold">
+          <tr><th class="p-1.5 border">Clause</th><th class="p-1.5 border">Test Title</th><th class="p-1.5 border">Verdict</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="p-1.5 border">R76-1 3.5.1</td><td class="p-1.5 border">Weighing Performance & Accuracy</td><td class="p-1.5 border font-bold text-emerald-700">PASS</td></tr>
+          <tr><td class="p-1.5 border">R76-1 3.6.1</td><td class="p-1.5 border">Repeatability</td><td class="p-1.5 border font-bold text-emerald-700">PASS</td></tr>
+          <tr><td class="p-1.5 border">R76-1 3.6.2</td><td class="p-1.5 border">Eccentric Loading</td><td class="p-1.5 border font-bold text-emerald-700">PASS</td></tr>
+          <tr><td class="p-1.5 border">R76-1 3.5.3</td><td class="p-1.5 border">Tare Weighing</td><td class="p-1.5 border font-bold text-emerald-700">PASS</td></tr>
+          <tr><td class="p-1.5 border">R76-1 3.8.2</td><td class="p-1.5 border">Discrimination</td><td class="p-1.5 border font-bold text-emerald-700">PASS</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-12 flex justify-between text-xs pt-8 border-t">
+      <div>
+        <div class="font-bold">Tested By:</div>
+        <div>Priya Nair (Scientific Officer)</div>
+        <div class="text-[10px] text-slate-500">RRSL Mass Metrology Lab</div>
+      </div>
+      <div class="text-right">
+        <div class="font-bold">Approved By (Approving Authority):</div>
+        <div>R. Venkatesh (Technical Reviewer)</div>
+        <div class="text-[10px] text-emerald-700 font-mono">Digitally Signed (SHA-256 Verified)</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-4 px-4 border-t border-slate-800 no-print">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+      <div>
+        SmartNAWI Hackathon Prototype &bull; Developed as per OIML Recommendation R 76 & Legal Metrology Act, 2009.
+      </div>
+      <div>
+        Department of Consumer Affairs (DoCA) &bull; Govt. of India
+      </div>
+    </div>
+  </footer>
+
+  <!-- INTERACTIVE JAVASCRIPT APP LOGIC -->
+  <script>
+    // Sample Reports Data
+    const REPORTS_DB = [
+      { id: 1, number: 'RRSL/NAWI/2025/0041', mfr: 'Essae-Teraoka Pvt. Ltd.', model: 'DS-252', class: 'III', cap: '30 kg', status: 'approved', verdict: 'PASS' },
+      { id: 2, number: 'RRSL/NAWI/2025/0047', mfr: 'Avery India Ltd.', model: 'PB-600', class: 'III', cap: '600 kg', status: 'under_review', verdict: 'FAIL' },
+      { id: 3, number: 'RRSL/NAWI/2026/0003', mfr: 'Sansui Electronics Pvt. Ltd.', model: 'WB-60T', class: 'III', cap: '60000 kg', status: 'in_progress', verdict: 'INCOMPLETE' },
+      { id: 4, number: 'RRSL/NAWI/2026/0005', mfr: 'Contech Instruments Ltd.', model: 'CA-224', class: 'II', cap: '220 g', status: 'approved', verdict: 'PASS' },
+    ];
+
+    function renderDashboardReports() {
+      const tbody = document.getElementById('dashboard-reports-list');
+      tbody.innerHTML = REPORTS_DB.map(r => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-mono font-semibold text-teal-700">${r.number}</td>
+          <td class="py-2.5 px-3 font-medium">${r.mfr} <span class="text-slate-400">·</span> ${r.model}</td>
+          <td class="py-2.5 px-3">Class ${r.class} (${r.cap})</td>
+          <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-xs font-semibold ${r.status==='approved'?'bg-emerald-100 text-emerald-800':r.status==='under_review'?'bg-violet-100 text-violet-800':'bg-amber-100 text-amber-800'}">${r.status.toUpperCase()}</span></td>
+          <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${r.verdict==='PASS'?'badge-pass':r.verdict==='FAIL'?'badge-fail':'badge-inc'}">${r.verdict}</span></td>
+          <td class="py-2.5 px-3 text-right">
+            <button onclick="loadReportInWorkspace(${r.id})" class="text-xs bg-slate-800 text-white px-2.5 py-1 rounded hover:bg-slate-700">Open</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderRepository() {
+      const tbody = document.getElementById('repo-rows');
+      tbody.innerHTML = REPORTS_DB.map(r => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-mono font-bold text-teal-700">${r.number}</td>
+          <td class="p-3 font-semibold">${r.mfr}</td>
+          <td class="p-3">${r.model}</td>
+          <td class="p-3">Class ${r.class}</td>
+          <td class="p-3">${r.cap}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-semibold ${r.status==='approved'?'bg-emerald-100 text-emerald-800':'bg-amber-100 text-amber-800'}">${r.status}</span></td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${r.verdict==='PASS'?'badge-pass':'badge-fail'}">${r.verdict}</span></td>
+          <td class="p-3 text-right">
+            <button onclick="loadReportInWorkspace(${r.id})" class="text-xs bg-teal-700 text-white px-3 py-1 rounded hover:bg-teal-800 font-bold">Open Report</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function showTab(tabName) {
+      ['dashboard', 'generator', 'repository', 'rules'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`tab-${t}`);
+        btn.classList.remove('border-amber-500', 'text-amber-400');
+        btn.classList.add('border-transparent', 'text-slate-300');
+      });
+      document.getElementById(`view-${tabName}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabName}`);
+      activeBtn.classList.remove('border-transparent', 'text-slate-300');
+      activeBtn.classList.add('border-amber-500', 'text-amber-400');
+    }
+
+    function showSection(secId) {
+      document.querySelectorAll('.test-sec').forEach(s => s.classList.add('hidden'));
+      document.getElementById(secId).classList.remove('hidden');
+      document.querySelectorAll('.side-nav-btn').forEach(b => {
+        b.classList.remove('border-teal-600', 'bg-teal-50');
+        b.classList.add('border-slate-200', 'bg-white');
+      });
+      document.getElementById(`btn-${secId}`).classList.remove('border-slate-200', 'bg-white');
+      document.getElementById(`btn-${secId}`).classList.add('border-teal-600', 'bg-teal-50');
+    }
+
+    function validateClassificationRules() {
+      const cls = document.getElementById('inp-class').value;
+      const max = parseFloat(document.getElementById('inp-max').value) || 0;
+      const e = parseFloat(document.getElementById('inp-e').value) || 1;
+      const min = parseFloat(document.getElementById('inp-min').value) || 0;
+      const n = Math.round(max / e);
+      document.getElementById('rule-n-calc').innerText = `Calculated scale intervals n = Max/e = ${n.toLocaleString()} (Permitted for Class ${cls}).`;
+    }
+
+    function suggestWeighingLoads() {
+      const tbody = document.getElementById('tbl-weighing-rows');
+      const max = parseFloat(document.getElementById('inp-max').value) || 30;
+      const min = parseFloat(document.getElementById('inp-min').value) || 0.2;
+      const loads = [min, parseFloat((max*0.25).toFixed(2)), parseFloat((max*0.5).toFixed(2)), parseFloat((max*0.75).toFixed(2)), max];
+      tbody.innerHTML = '';
+      loads.forEach(l => {
+        addWeighingRow(l, l, l);
+      });
+    }
+
+    function addWeighingRow(load, indUp, indDown) {
+      const tbody = document.getElementById('tbl-weighing-rows');
+      const e = parseFloat(document.getElementById('inp-e').value) || 0.01;
+      const mpeVal = (load <= 5) ? (0.5*e) : (load <= 20) ? (1.0*e) : (1.5*e);
+      const errUp = indUp - load;
+      const pass = Math.abs(errUp) <= (mpeVal + 1e-9);
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="p-2"><input type="number" step="any" value="${load}" class="w-24 border rounded px-2 py-1 text-xs"></td>
+        <td class="p-2"><input type="number" step="any" value="${indUp}" class="w-24 border rounded px-2 py-1 text-xs"></td>
+        <td class="p-2 font-mono font-bold text-xs ${errUp===0?'text-emerald-700':'text-slate-800'}">${errUp.toFixed(3)}</td>
+        <td class="p-2"><input type="number" step="any" value="${indDown}" class="w-24 border rounded px-2 py-1 text-xs"></td>
+        <td class="p-2 font-mono font-bold text-xs">${(indDown-load).toFixed(3)}</td>
+        <td class="p-2 text-xs text-slate-500">&plusmn;${mpeVal.toFixed(3)} kg</td>
+        <td class="p-2 text-center"><span class="px-2 py-0.5 rounded text-xs font-bold ${pass?'badge-pass':'badge-fail'}">${pass?'PASS':'FAIL'}</span></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function loadReportInWorkspace(id) {
+      const rep = REPORTS_DB.find(r => r.id === id);
+      if (!rep) return;
+      document.getElementById('active-report-no').innerText = rep.number;
+      document.getElementById('active-verdict-badge').innerText = `OVERALL: ${rep.verdict}`;
+      document.getElementById('active-instrument-title').innerText = `${rep.mfr} — ${rep.model}`;
+      document.getElementById('inp-manufacturer').value = rep.mfr;
+      document.getElementById('inp-model').value = rep.model;
+      suggestWeighingLoads();
+      showTab('generator');
+    }
+
+    function loadSampleData(type) {
+      if (type === 'pass') {
+        loadReportInWorkspace(1);
+      } else {
+        loadReportInWorkspace(2);
+      }
+    }
+
+    function previewReportPrint() {
+      window.print();
+    }
+
+    function exportDocxMock() {
+      alert("MS Word (.docx) Test Report export generated successfully for " + document.getElementById('active-report-no').innerText);
+    }
+
+    function digitalSignModal() {
+      const hash = "SHA256-" + Math.random().toString(36).substring(2, 15).toUpperCase();
+      alert("Report Digitally Signed by Approving Authority (R. Venkatesh).\nCryptographic Signature Hash: " + hash);
+    }
+
+    function switchRole(role) {
+      alert("Role switched to: " + role.toUpperCase());
+    }
+
+    // Initialize
+    window.onload = function() {
+      renderDashboardReports();
+      renderRepository();
+      suggestWeighingLoads();
+    };
+  </script>
+</body>
+</html>
