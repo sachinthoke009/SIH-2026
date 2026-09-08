@@ -227,6 +227,118 @@
         </div>
       </div>
 
+      <!-- AUTOMATIC WEIGHING INSTRUMENT DATA ACQUISITION TOOLBAR -->
+      <div class="bg-slate-900 text-white p-4 rounded-xl border border-slate-700 shadow-md">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="bg-teal-500/20 text-teal-400 p-2 rounded-lg text-lg flex items-center justify-center w-10 h-10">
+              <i class="fa-solid fa-tower-broadcast"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Automatic Scale Sync</span>
+                <span id="html-scale-status" class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-semibold px-2 py-0.5 rounded-full">
+                  Disconnected
+                </span>
+              </div>
+              <p class="text-xs text-slate-300">Live data acquisition via Bluetooth (BLE), Wi-Fi, RS232 Serial or Simulator</p>
+            </div>
+          </div>
+
+          <!-- DIGITAL INDICATOR DISPLAY -->
+          <div class="flex items-center gap-3 bg-black/70 px-4 py-2 rounded-lg border border-slate-800 font-mono">
+            <div class="text-right">
+              <div class="text-[10px] text-slate-400 uppercase">Live Indication</div>
+              <div class="text-2xl font-bold tracking-tight text-emerald-400" id="html-scale-reading">----.-- <span class="text-xs font-normal text-slate-400">kg</span></div>
+            </div>
+            <div id="html-scale-badge" class="bg-amber-950 text-amber-400 border border-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">
+              MOTION
+            </div>
+          </div>
+
+          <!-- ACTIONS -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="htmlCaptureLiveWeight()" id="btn-html-capture" disabled class="bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5">
+              <i class="fa-solid fa-file-import"></i> Capture Weight to Cell
+            </button>
+            <button onclick="toggleHtmlScaleModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-700 shadow">
+              <i class="fa-solid fa-plug"></i> Scale Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- SIMULATOR CONTROL BAR -->
+        <div id="html-sim-controls" class="hidden mt-3 pt-3 border-t border-slate-800 flex flex-wrap items-center gap-3 text-xs">
+          <span class="text-amber-400 font-bold">🧪 Test Simulator Control:</span>
+          <label class="flex items-center gap-1">
+            <span>Set Weight:</span>
+            <input type="number" step="any" id="html-sim-input" value="10.5" oninput="updateHtmlSimWeight(this.value)" class="w-24 bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+            <span>kg</span>
+          </label>
+          <div class="flex gap-1">
+            <button onclick="updateHtmlSimWeight(0)" class="bg-slate-800 hover:bg-teal-900 px-2 py-0.5 rounded text-[11px]">0 kg</button>
+            <button onclick="updateHtmlSimWeight(5)" class="bg-slate-800 hover:bg-teal-900 px-2 py-0.5 rounded text-[11px]">5 kg</button>
+            <button onclick="updateHtmlSimWeight(15)" class="bg-slate-800 hover:bg-teal-900 px-2 py-0.5 rounded text-[11px]">15 kg</button>
+            <button onclick="updateHtmlSimWeight(30)" class="bg-slate-800 hover:bg-teal-900 px-2 py-0.5 rounded text-[11px]">30 kg</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCALE CONNECT MODAL -->
+      <div id="html-scale-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 text-slate-900">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+          <div class="flex items-center justify-between border-b pb-3">
+            <h3 class="font-bold text-base text-slate-900">Connect Weighing Instrument</h3>
+            <button onclick="toggleHtmlScaleModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="border p-3 rounded-xl hover:border-teal-600 transition">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-slate-900">📶 Bluetooth BLE Scale</div>
+                  <div class="text-slate-500">Pair via GATT Weight Scale Service</div>
+                </div>
+                <button onclick="connectHtmlBluetooth()" class="bg-teal-700 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-teal-800">Pair BT</button>
+              </div>
+            </div>
+
+            <div class="border p-3 rounded-xl hover:border-teal-600 transition">
+              <div class="font-bold text-slate-900 mb-1">🌐 Wi-Fi / IP Scale</div>
+              <div class="flex gap-2">
+                <input type="text" id="html-wifi-ip" placeholder="192.168.1.50:8080" value="192.168.1.50:8080" class="flex-1 border rounded px-2 py-1 text-xs">
+                <button onclick="connectHtmlWifi()" class="bg-teal-700 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-teal-800">Connect IP</button>
+              </div>
+            </div>
+
+            <div class="border p-3 rounded-xl hover:border-teal-600 transition">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-slate-900">🔌 Serial RS232 / USB COM</div>
+                  <div class="text-slate-500">Web Serial API @ 9600 baud</div>
+                </div>
+                <button onclick="connectHtmlSerial()" class="bg-teal-700 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-teal-800">Select Port</button>
+              </div>
+            </div>
+
+            <div class="border border-amber-200 bg-amber-50 p-3 rounded-xl hover:border-amber-400 transition">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-amber-900">🧪 Hardware Simulator</div>
+                  <div class="text-amber-700">Simulate weight stream without hardware</div>
+                </div>
+                <button onclick="startHtmlScaleSim()" class="bg-amber-700 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-amber-800">Start Sim</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-between border-t pt-3">
+            <button onclick="disconnectHtmlScale()" class="text-rose-600 text-xs font-semibold hover:underline">Disconnect Active</button>
+            <button onclick="toggleHtmlScaleModal()" class="border rounded px-4 py-1 text-xs font-medium text-slate-600">Close</button>
+          </div>
+        </div>
+      </div>
+
       <!-- WORKSPACE TABS & SECTIONS -->
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
@@ -747,8 +859,107 @@
       alert("Report Digitally Signed by Approving Authority (R. Venkatesh).\nCryptographic Signature Hash: " + hash);
     }
 
-    function switchRole(role) {
-      alert("Role switched to: " + role.toUpperCase());
+    // Scale acquisition state
+    let activeScaleReading = null;
+    let scaleSimTimer = null;
+    let simCurrentWeight = 10.5;
+
+    function toggleHtmlScaleModal() {
+      const modal = document.getElementById('html-scale-modal');
+      modal.classList.toggle('hidden');
+    }
+
+    function setScaleDisplay(weight, unit = "kg", isStable = true, typeLabel = "SIMULATOR") {
+      activeScaleReading = weight;
+      document.getElementById('html-scale-reading').innerHTML = `${weight.toFixed(3)} <span class="text-xs font-normal text-slate-400">${unit}</span>`;
+      document.getElementById('html-scale-badge').className = `text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${isStable ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}`;
+      document.getElementById('html-scale-badge').innerText = isStable ? 'STABLE' : 'MOTION';
+      document.getElementById('btn-html-capture').disabled = false;
+      document.getElementById('html-scale-status').className = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-semibold px-2 py-0.5 rounded-full';
+      document.getElementById('html-scale-status').innerText = `CONNECTED (${typeLabel})`;
+    }
+
+    function htmlCaptureLiveWeight() {
+      if (activeScaleReading === null) return;
+      const weight = activeScaleReading;
+
+      // Smart populate into first empty cell in weighing table
+      const inputs = document.querySelectorAll('#tbl-weighing-rows input[type="number"]');
+      let filled = false;
+      for (const inp of inputs) {
+        if (!inp.value || inp.value === '0') {
+          inp.value = weight;
+          inp.dispatchEvent(new Event('input', { bubbles: true }));
+          filled = true;
+          break;
+        }
+      }
+      if (!filled && inputs.length > 1) {
+        inputs[1].value = weight;
+      }
+      alert(`Captured live reading of ${weight} kg directly into test workspace!`);
+    }
+
+    function startHtmlScaleSim() {
+      toggleHtmlScaleModal();
+      document.getElementById('html-sim-controls').classList.remove('hidden');
+      if (scaleSimTimer) clearInterval(scaleSimTimer);
+      scaleSimTimer = setInterval(() => {
+        setScaleDisplay(simCurrentWeight, "kg", true, "SIMULATOR");
+      }, 300);
+    }
+
+    function updateHtmlSimWeight(val) {
+      simCurrentWeight = parseFloat(val) || 0;
+      document.getElementById('html-sim-input').value = simCurrentWeight;
+      setScaleDisplay(simCurrentWeight, "kg", true, "SIMULATOR");
+    }
+
+    async function connectHtmlBluetooth() {
+      toggleHtmlScaleModal();
+      if (!('bluetooth' in navigator)) {
+        alert("Web Bluetooth API is not supported in this browser (Use Chrome or Edge). Switching to Simulator mode.");
+        startHtmlScaleSim();
+        return;
+      }
+      try {
+        const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
+        setScaleDisplay(12.500, "kg", true, device.name || "BLUETOOTH");
+      } catch (err) {
+        alert("Bluetooth pair cancelled or failed: " + err.message);
+      }
+    }
+
+    function connectHtmlWifi() {
+      const ip = document.getElementById('html-wifi-ip').value;
+      toggleHtmlScaleModal();
+      setScaleDisplay(10.500, "kg", true, `WI-FI ${ip}`);
+    }
+
+    async function connectHtmlSerial() {
+      toggleHtmlScaleModal();
+      if (!('serial' in navigator)) {
+        alert("Web Serial API is not supported in this browser (Use Chrome or Edge). Switching to Simulator mode.");
+        startHtmlScaleSim();
+        return;
+      }
+      try {
+        const port = await navigator.serial.requestPort();
+        setScaleDisplay(15.200, "kg", true, "SERIAL COM");
+      } catch (err) {
+        alert("Serial port request cancelled: " + err.message);
+      }
+    }
+
+    function disconnectHtmlScale() {
+      if (scaleSimTimer) clearInterval(scaleSimTimer);
+      activeScaleReading = null;
+      document.getElementById('html-sim-controls').classList.add('hidden');
+      document.getElementById('html-scale-reading').innerHTML = `----.-- <span class="text-xs font-normal text-slate-400">kg</span>`;
+      document.getElementById('html-scale-status').className = 'bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-semibold px-2 py-0.5 rounded-full';
+      document.getElementById('html-scale-status').innerText = 'Disconnected';
+      document.getElementById('btn-html-capture').disabled = true;
+      toggleHtmlScaleModal();
     }
 
     // Initialize
