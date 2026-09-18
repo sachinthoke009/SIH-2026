@@ -1095,6 +1095,143 @@
       }
     }
 
+    function resetFormFieldsToBlank() {
+      document.getElementById('inp-manufacturer').value = '';
+      document.getElementById('inp-model').value = '';
+      document.getElementById('inp-serial').value = '';
+      document.getElementById('inp-manufacturer').placeholder = 'Enter Manufacturer Name (e.g. Avery / Essae)';
+      document.getElementById('inp-model').placeholder = 'Enter Instrument Model';
+      document.getElementById('inp-serial').placeholder = 'Enter Serial Number';
+
+      document.getElementById('tbl-weighing-rows').innerHTML = '';
+
+      document.querySelectorAll('.rep-input-1').forEach(i => i.value = '');
+      document.querySelectorAll('.rep-input-2').forEach(i => i.value = '');
+
+      ['ecc-1','ecc-2','ecc-3','ecc-4','ecc-5'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+
+      ['tare-load','tare-net','tare-ind'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('tare-err-calc').innerText = '—';
+      document.getElementById('tare-status-badge').innerText = 'INCOMPLETE';
+      document.getElementById('tare-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+
+      ['disc-base','disc-extra','disc-ind'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('disc-change-calc').innerText = '—';
+      document.getElementById('disc-status-badge').innerText = 'INCOMPLETE';
+      document.getElementById('disc-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+
+      ['zero-init','zero-semiauto','zero-err'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('zero-status-badge').innerText = 'INCOMPLETE';
+      document.getElementById('zero-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+
+      ['warm-0','warm-5','warm-15','warm-30'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('warmup-status-badge').innerText = 'INCOMPLETE';
+      document.getElementById('warmup-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+
+      ['temp-20a','temp-40','temp-10','temp-5'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('temp-status-badge').innerText = 'INCOMPLETE';
+      document.getElementById('temp-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+
+      ['volt-230','volt-195','volt-253'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('voltage-status-badge').innerText = 'INCOMPLETE';
+      document.getElementById('voltage-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+
+      document.querySelectorAll('.span-inp').forEach(i => i.value = '');
+      document.getElementById('span-status-badge').innerText = 'INCOMPLETE';
+      document.getElementById('span-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+
+      document.getElementById('rep-status-1').innerText = 'INCOMPLETE';
+      document.getElementById('rep-status-1').className = 'badge-inc px-2 py-0.5 rounded';
+      document.getElementById('rep-status-2').innerText = 'INCOMPLETE';
+      document.getElementById('rep-status-2').className = 'badge-inc px-2 py-0.5 rounded';
+      document.getElementById('ecc-status-badge').innerText = 'INCOMPLETE';
+      document.getElementById('ecc-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+    }
+
+    function populatePassSampleValues() {
+      document.getElementById('inp-manufacturer').value = 'Essae-Teraoka Pvt. Ltd.';
+      document.getElementById('inp-model').value = 'DS-252';
+      document.getElementById('inp-serial').value = 'ET-2025-014532';
+      document.getElementById('inp-max').value = 30;
+      document.getElementById('inp-min').value = 0.2;
+      document.getElementById('inp-e').value = 0.01;
+      document.getElementById('inp-d').value = 0.01;
+
+      suggestWeighingLoads();
+
+      const rep1 = [15.00, 15.01, 15.00, 15.00, 15.01, 15.00, 15.00, 15.01, 15.00, 15.00];
+      const rep2 = [30.01, 30.01, 30.02, 30.01, 30.01, 30.01, 30.02, 30.01, 30.01, 30.01];
+
+      document.querySelectorAll('.rep-input-1').forEach((inp, idx) => { if (rep1[idx] !== undefined) inp.value = rep1[idx]; });
+      document.querySelectorAll('.rep-input-2').forEach((inp, idx) => { if (rep2[idx] !== undefined) inp.value = rep2[idx]; });
+
+      document.getElementById('ecc-1').value = 10.00;
+      document.getElementById('ecc-2').value = 10.01;
+      document.getElementById('ecc-3').value = 10.00;
+      document.getElementById('ecc-4').value = 9.99;
+      document.getElementById('ecc-5').value = 10.00;
+
+      document.getElementById('tare-load').value = 5.00;
+      document.getElementById('tare-net').value = 10.00;
+      document.getElementById('tare-ind').value = 10.00;
+
+      document.getElementById('disc-base').value = 10.00;
+      document.getElementById('disc-extra').value = 0.014;
+      document.getElementById('disc-ind').value = 10.01;
+
+      document.getElementById('zero-init').value = 12.5;
+      document.getElementById('zero-semiauto').value = 2.0;
+      document.getElementById('zero-err').value = 0.10;
+
+      document.getElementById('warm-0').value = 15.00;
+      document.getElementById('warm-5').value = 15.00;
+      document.getElementById('warm-15').value = 15.01;
+      document.getElementById('warm-30').value = 15.00;
+
+      document.getElementById('temp-20a').value = 15.00;
+      document.getElementById('temp-40').value = 15.01;
+      document.getElementById('temp-10').value = 14.99;
+      document.getElementById('temp-5').value = 15.00;
+
+      document.getElementById('volt-230').value = 15.00;
+      document.getElementById('volt-195').value = 15.00;
+      document.getElementById('volt-253').value = 15.01;
+
+      const spanVals = [15.00, 15.01, 15.00, 15.00, 15.01, 15.00, 15.00, 15.00];
+      document.querySelectorAll('.span-inp').forEach((inp, idx) => { if (spanVals[idx] !== undefined) inp.value = spanVals[idx]; });
+    }
+
+    function populateFailSampleValues() {
+      populatePassSampleValues();
+      document.getElementById('inp-manufacturer').value = 'Avery India Ltd.';
+      document.getElementById('inp-model').value = 'PB-600';
+      document.getElementById('inp-serial').value = 'AV-2025-009841';
+
+      // Set corner load position 4 to fail MPE
+      document.getElementById('ecc-4').value = 10.05;
+    }
+
     function createNewReport() {
       const nextNum = REPORTS_DB.length + 1;
       const year = new Date().getFullYear();
@@ -1103,8 +1240,8 @@
       const newRep = {
         id: Date.now(),
         number: reportNo,
-        mfr: 'New Manufacturer Pvt Ltd',
-        model: 'NW-100',
+        mfr: 'New Instrument',
+        model: 'Type-Evaluation',
         class: 'III',
         cap: '30 kg',
         status: 'in_progress',
@@ -1115,21 +1252,14 @@
       REPORTS_DB.unshift(newRep);
       currentReportId = newRep.id;
 
-      // Populate fresh inputs
+      // Populate fresh blank inputs
       document.getElementById('active-report-no').innerText = newRep.number;
       document.getElementById('active-verdict-badge').innerText = `OVERALL: INCOMPLETE`;
       document.getElementById('active-verdict-badge').className = `badge-inc text-xs font-bold px-2.5 py-1 rounded-full`;
-      document.getElementById('active-instrument-title').innerText = `${newRep.mfr} — ${newRep.model}`;
+      document.getElementById('active-instrument-title').innerText = `New Test Report Workspace`;
 
-      document.getElementById('inp-manufacturer').value = newRep.mfr;
-      document.getElementById('inp-model').value = newRep.model;
-      document.getElementById('inp-serial').value = `SN-${Date.now().toString().slice(-6)}`;
-      document.getElementById('inp-max').value = 30;
-      document.getElementById('inp-min').value = 0.2;
-      document.getElementById('inp-e').value = 0.01;
-      document.getElementById('inp-d').value = 0.01;
+      resetFormFieldsToBlank();
 
-      suggestWeighingLoads();
       evaluateAllTests();
       renderDashboardReports();
       renderRepository();
@@ -1184,10 +1314,16 @@
 
     function evalWeighing() {
       const rows = document.querySelectorAll('#tbl-weighing-rows tr');
+      if (rows.length === 0) {
+        updateBadge('v-weighing', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
       let allPass = true;
+      let count = 0;
       rows.forEach(tr => {
         const inputs = tr.querySelectorAll('input');
-        if (inputs.length >= 3) {
+        if (inputs.length >= 3 && inputs[0].value !== '' && inputs[1].value !== '') {
+          count++;
           const load = parseFloat(inputs[0].value) || 0;
           const indUp = parseFloat(inputs[1].value) || 0;
           const indDown = parseFloat(inputs[2].value) || 0;
@@ -1199,58 +1335,86 @@
           if (!p) allPass = false;
         }
       });
-      updateBadge('v-weighing', allPass);
-      return allPass;
+      if (count === 0) {
+        updateBadge('v-weighing', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
+      const verdict = allPass ? 'PASS' : 'FAIL';
+      updateBadge('v-weighing', verdict);
+      return verdict;
     }
 
     function evalRepeatability() {
-      const rep1 = Array.from(document.querySelectorAll('.rep-input-1')).map(i => parseFloat(i.value)||0);
-      const rep2 = Array.from(document.querySelectorAll('.rep-input-2')).map(i => parseFloat(i.value)||0);
+      const inputs1 = Array.from(document.querySelectorAll('.rep-input-1')).filter(i => i.value !== '');
+      const inputs2 = Array.from(document.querySelectorAll('.rep-input-2')).filter(i => i.value !== '');
 
-      const max1 = Math.max(...rep1), min1 = Math.min(...rep1);
-      const max2 = Math.max(...rep2), min2 = Math.min(...rep2);
+      if (inputs1.length === 0 && inputs2.length === 0) {
+        document.getElementById('rep-status-1').innerText = 'INCOMPLETE';
+        document.getElementById('rep-status-1').className = 'badge-inc px-2 py-0.5 rounded';
+        document.getElementById('rep-status-2').innerText = 'INCOMPLETE';
+        document.getElementById('rep-status-2').className = 'badge-inc px-2 py-0.5 rounded';
+        updateBadge('v-repeatability', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
 
-      const spread1 = max1 - min1;
-      const spread2 = max2 - min2;
+      const rep1 = inputs1.map(i => parseFloat(i.value)||0);
+      const rep2 = inputs2.map(i => parseFloat(i.value)||0);
 
-      const p1 = spread1 <= 0.015;
-      const p2 = spread2 <= 0.015;
+      let p1 = true, p2 = true;
+      if (rep1.length > 0) {
+        const spread1 = Math.max(...rep1) - Math.min(...rep1);
+        p1 = spread1 <= 0.015;
+        document.getElementById('rep-status-1').innerText = `${p1?'PASS':'FAIL'} (Spread: ${spread1.toFixed(3)} kg)`;
+        document.getElementById('rep-status-1').className = p1 ? 'badge-pass px-2 py-0.5 rounded' : 'badge-fail px-2 py-0.5 rounded';
+      }
+      if (rep2.length > 0) {
+        const spread2 = Math.max(...rep2) - Math.min(...rep2);
+        p2 = spread2 <= 0.015;
+        document.getElementById('rep-status-2').innerText = `${p2?'PASS':'FAIL'} (Spread: ${spread2.toFixed(3)} kg)`;
+        document.getElementById('rep-status-2').className = p2 ? 'badge-pass px-2 py-0.5 rounded' : 'badge-fail px-2 py-0.5 rounded';
+      }
 
-      document.getElementById('rep-status-1').innerText = `${p1?'PASS':'FAIL'} (Spread: ${spread1.toFixed(3)} kg)`;
-      document.getElementById('rep-status-1').className = p1 ? 'badge-pass px-2 py-0.5 rounded' : 'badge-fail px-2 py-0.5 rounded';
-
-      document.getElementById('rep-status-2').innerText = `${p2?'PASS':'FAIL'} (Spread: ${spread2.toFixed(3)} kg)`;
-      document.getElementById('rep-status-2').className = p2 ? 'badge-pass px-2 py-0.5 rounded' : 'badge-fail px-2 py-0.5 rounded';
-
-      const pass = p1 && p2;
-      updateBadge('v-repeatability', pass);
-      return pass;
+      const verdict = (p1 && p2) ? 'PASS' : 'FAIL';
+      updateBadge('v-repeatability', verdict);
+      return verdict;
     }
 
     function evalEccentricity() {
-      const e1 = parseFloat(document.getElementById('ecc-1').value)||0;
-      const e2 = parseFloat(document.getElementById('ecc-2').value)||0;
-      const e3 = parseFloat(document.getElementById('ecc-3').value)||0;
-      const e4 = parseFloat(document.getElementById('ecc-4').value)||0;
-      const e5 = parseFloat(document.getElementById('ecc-5').value)||0;
+      const inputs = ['ecc-1','ecc-2','ecc-3','ecc-4','ecc-5'].map(id => document.getElementById(id)?.value);
+      if (inputs.every(v => !v || v.trim() === '')) {
+        document.getElementById('ecc-status-badge').innerText = 'INCOMPLETE (Observations Pending)';
+        document.getElementById('ecc-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+        updateBadge('v-eccentricity', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
 
+      const eccVals = inputs.map(v => parseFloat(v)||0);
       const load = 10.00;
       const mpe = 0.010;
 
-      const errs = [e1, e2, e3, e4, e5].map(v => Math.abs(v - load));
+      const errs = eccVals.map(v => Math.abs(v - load));
       const maxErr = Math.max(...errs);
 
       const pass = maxErr <= mpe + 1e-9;
       document.getElementById('ecc-status-badge').innerText = `${pass?'PASS':'FAIL'} (Max Error: ${maxErr.toFixed(3)} kg ${pass?'<= ':'> '}MPE)`;
       document.getElementById('ecc-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
-      updateBadge('v-eccentricity', pass);
-      return pass;
+      const verdict = pass ? 'PASS' : 'FAIL';
+      updateBadge('v-eccentricity', verdict);
+      return verdict;
     }
 
     function evalTare() {
+      const indVal = document.getElementById('tare-ind').value;
+      if (!indVal || indVal.trim() === '') {
+        document.getElementById('tare-err-calc').innerText = '—';
+        document.getElementById('tare-status-badge').innerText = 'INCOMPLETE';
+        document.getElementById('tare-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+        updateBadge('v-tare', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
       const net = parseFloat(document.getElementById('tare-net').value)||0;
-      const ind = parseFloat(document.getElementById('tare-ind').value)||0;
+      const ind = parseFloat(indVal)||0;
       const err = Math.abs(ind - net);
       const pass = err <= 0.010;
 
@@ -1258,13 +1422,22 @@
       document.getElementById('tare-status-badge').innerText = pass ? 'PASS' : 'FAIL';
       document.getElementById('tare-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
-      updateBadge('v-tare', pass);
-      return pass;
+      const verdict = pass ? 'PASS' : 'FAIL';
+      updateBadge('v-tare', verdict);
+      return verdict;
     }
 
     function evalDiscrimination() {
+      const indVal = document.getElementById('disc-ind').value;
+      if (!indVal || indVal.trim() === '') {
+        document.getElementById('disc-change-calc').innerText = '—';
+        document.getElementById('disc-status-badge').innerText = 'INCOMPLETE';
+        document.getElementById('disc-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+        updateBadge('v-discrimination', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
       const extra = parseFloat(document.getElementById('disc-extra').value)||0;
-      const ind = parseFloat(document.getElementById('disc-ind').value)||0;
+      const ind = parseFloat(indVal)||0;
       const base = parseFloat(document.getElementById('disc-base').value)||0;
       const change = ind - base;
 
@@ -1273,12 +1446,20 @@
       document.getElementById('disc-status-badge').innerText = pass ? 'PASS' : 'FAIL';
       document.getElementById('disc-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
-      updateBadge('v-discrimination', pass);
-      return pass;
+      const verdict = pass ? 'PASS' : 'FAIL';
+      updateBadge('v-discrimination', verdict);
+      return verdict;
     }
 
     function evalZero() {
-      const init = parseFloat(document.getElementById('zero-init').value)||0;
+      const initVal = document.getElementById('zero-init').value;
+      if (!initVal || initVal.trim() === '') {
+        document.getElementById('zero-status-badge').innerText = 'INCOMPLETE';
+        document.getElementById('zero-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+        updateBadge('v-zero', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
+      const init = parseFloat(initVal)||0;
       const semiauto = parseFloat(document.getElementById('zero-semiauto').value)||0;
       const err = parseFloat(document.getElementById('zero-err').value)||0;
 
@@ -1286,12 +1467,20 @@
       document.getElementById('zero-status-badge').innerText = pass ? 'PASS (All Clause 4.5 Criteria Met)' : 'FAIL (Range or Accuracy Exceeded)';
       document.getElementById('zero-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
-      updateBadge('v-zero', pass);
-      return pass;
+      const verdict = pass ? 'PASS' : 'FAIL';
+      updateBadge('v-zero', verdict);
+      return verdict;
     }
 
     function evalWarmup() {
-      const w0 = parseFloat(document.getElementById('warm-0').value)||0;
+      const w0Val = document.getElementById('warm-0').value;
+      if (!w0Val || w0Val.trim() === '') {
+        document.getElementById('warmup-status-badge').innerText = 'INCOMPLETE';
+        document.getElementById('warmup-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+        updateBadge('v-warmup', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
+      const w0 = parseFloat(w0Val)||0;
       const w5 = parseFloat(document.getElementById('warm-5').value)||0;
       const w15 = parseFloat(document.getElementById('warm-15').value)||0;
       const w30 = parseFloat(document.getElementById('warm-30').value)||0;
@@ -1302,12 +1491,20 @@
       document.getElementById('warmup-status-badge').innerText = pass ? 'PASS (All intervals within MPE)' : 'FAIL (Drift exceeded MPE)';
       document.getElementById('warmup-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
-      updateBadge('v-warmup', pass);
-      return pass;
+      const verdict = pass ? 'PASS' : 'FAIL';
+      updateBadge('v-warmup', verdict);
+      return verdict;
     }
 
     function evalTemp() {
-      const t20 = parseFloat(document.getElementById('temp-20a').value)||0;
+      const t20Val = document.getElementById('temp-20a').value;
+      if (!t20Val || t20Val.trim() === '') {
+        document.getElementById('temp-status-badge').innerText = 'INCOMPLETE';
+        document.getElementById('temp-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+        updateBadge('v-temp', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
+      const t20 = parseFloat(t20Val)||0;
       const t40 = parseFloat(document.getElementById('temp-40').value)||0;
       const t10 = parseFloat(document.getElementById('temp-10').value)||0;
       const t5 = parseFloat(document.getElementById('temp-5').value)||0;
@@ -1318,12 +1515,20 @@
       document.getElementById('temp-status-badge').innerText = pass ? 'PASS (Thermal coefficient <= 1e/5°C)' : 'FAIL';
       document.getElementById('temp-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
-      updateBadge('v-temp', pass);
-      return pass;
+      const verdict = pass ? 'PASS' : 'FAIL';
+      updateBadge('v-temp', verdict);
+      return verdict;
     }
 
     function evalVoltage() {
-      const v230 = parseFloat(document.getElementById('volt-230').value)||0;
+      const v230Val = document.getElementById('volt-230').value;
+      if (!v230Val || v230Val.trim() === '') {
+        document.getElementById('voltage-status-badge').innerText = 'INCOMPLETE';
+        document.getElementById('voltage-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+        updateBadge('v-voltage', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
+      const v230 = parseFloat(v230Val)||0;
       const v195 = parseFloat(document.getElementById('volt-195').value)||0;
       const v253 = parseFloat(document.getElementById('volt-253').value)||0;
 
@@ -1333,12 +1538,20 @@
       document.getElementById('voltage-status-badge').innerText = pass ? 'PASS (Errors <= MPE across voltage range)' : 'FAIL';
       document.getElementById('voltage-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
-      updateBadge('v-voltage', pass);
-      return pass;
+      const verdict = pass ? 'PASS' : 'FAIL';
+      updateBadge('v-voltage', verdict);
+      return verdict;
     }
 
     function evalSpan() {
-      const spanInputs = Array.from(document.querySelectorAll('.span-inp')).map(i => parseFloat(i.value)||0);
+      const filledInputs = Array.from(document.querySelectorAll('.span-inp')).filter(i => i.value !== '');
+      if (filledInputs.length === 0) {
+        document.getElementById('span-status-badge').innerText = 'INCOMPLETE';
+        document.getElementById('span-status-badge').className = 'badge-inc px-2.5 py-1 rounded font-bold';
+        updateBadge('v-span', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
+      const spanInputs = filledInputs.map(i => parseFloat(i.value)||0);
       const avg = spanInputs.reduce((a,b)=>a+b,0) / (spanInputs.length||1);
       const maxDev = Math.max(...spanInputs.map(v => Math.abs(v - avg)));
 
@@ -1346,22 +1559,31 @@
       document.getElementById('span-status-badge').innerText = pass ? `PASS (Max Dev: ${maxDev.toFixed(3)} kg <= 0.5 MPE)` : 'FAIL';
       document.getElementById('span-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
-      updateBadge('v-span', pass);
-      return pass;
+      const verdict = pass ? 'PASS' : 'FAIL';
+      updateBadge('v-span', verdict);
+      return verdict;
     }
 
-    function updateBadge(id, pass) {
+    function updateBadge(id, status) {
       const el = document.getElementById(id);
       if (!el) return;
-      el.innerText = pass ? 'PASS' : 'FAIL';
-      el.className = pass ? 'badge-pass text-[10px] font-bold px-2 py-0.5 rounded' : 'badge-fail text-[10px] font-bold px-2 py-0.5 rounded';
+      if (status === true || status === 'PASS') {
+        el.innerText = 'PASS';
+        el.className = 'badge-pass text-[10px] font-bold px-2 py-0.5 rounded';
+      } else if (status === false || status === 'FAIL') {
+        el.innerText = 'FAIL';
+        el.className = 'badge-fail text-[10px] font-bold px-2 py-0.5 rounded';
+      } else {
+        el.innerText = 'INCOMPLETE';
+        el.className = 'badge-inc text-[10px] font-bold px-2 py-0.5 rounded';
+      }
     }
 
     function runGhostModeAudit() {
       const flags = [];
 
       // 1. Repeatability Series 1 Zero Variance Check
-      const rep1 = Array.from(document.querySelectorAll('.rep-input-1')).map(i => parseFloat(i.value)||0);
+      const rep1 = Array.from(document.querySelectorAll('.rep-input-1')).map(i => parseFloat(i.value)||0).filter(v => v !== 0);
       if (rep1.length >= 5) {
         const u1 = new Set(rep1.map(v => v.toFixed(4)));
         if (u1.size === 1) {
@@ -1370,7 +1592,7 @@
       }
 
       // 2. Repeatability Series 2 Zero Variance Check
-      const rep2 = Array.from(document.querySelectorAll('.rep-input-2')).map(i => parseFloat(i.value)||0);
+      const rep2 = Array.from(document.querySelectorAll('.rep-input-2')).map(i => parseFloat(i.value)||0).filter(v => v !== 0);
       if (rep2.length >= 5) {
         const u2 = new Set(rep2.map(v => v.toFixed(4)));
         if (u2.size === 1) {
@@ -1379,16 +1601,12 @@
       }
 
       // 3. Eccentricity Corner Load Uniformity Check
-      const eccVals = [
-        parseFloat(document.getElementById('ecc-1')?.value)||0,
-        parseFloat(document.getElementById('ecc-2')?.value)||0,
-        parseFloat(document.getElementById('ecc-3')?.value)||0,
-        parseFloat(document.getElementById('ecc-4')?.value)||0,
-        parseFloat(document.getElementById('ecc-5')?.value)||0
-      ];
-      const uEcc = new Set(eccVals.map(v => v.toFixed(4)));
-      if (uEcc.size === 1) {
-        flags.push(`Eccentricity Test: Identical corner load indications (${eccVals[0]} kg) across all 5 platform positions. Unrealistic transducer behavior.`);
+      const eccInputs = ['ecc-1','ecc-2','ecc-3','ecc-4','ecc-5'].map(id => document.getElementById(id)?.value).filter(v => v && v.trim() !== '');
+      if (eccInputs.length >= 5) {
+        const uEcc = new Set(eccInputs.map(v => parseFloat(v).toFixed(4)));
+        if (uEcc.size === 1) {
+          flags.push(`Eccentricity Test: Identical corner load indications (${eccInputs[0]} kg) across all 5 platform positions. Unrealistic transducer behavior.`);
+        }
       }
 
       // UI Update
@@ -1421,7 +1639,7 @@
     }
 
     function evaluateAllTests() {
-      const p1 = true;
+      const p1 = 'PASS';
       const p2 = evalWeighing();
       const p3 = evalRepeatability();
       const p4 = evalEccentricity();
@@ -1433,24 +1651,46 @@
       const p10 = evalVoltage();
       const p11 = evalSpan();
 
+      const results = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11];
+
+      let verdictText = 'INCOMPLETE';
+      if (results.includes('FAIL')) {
+        verdictText = 'FAIL';
+      } else if (results.every(r => r === 'PASS')) {
+        verdictText = 'PASS';
+      } else {
+        verdictText = 'INCOMPLETE';
+      }
+
       const ghostFlags = runGhostModeAudit();
 
-      const overallPass = p1 && p2 && p3 && p4 && p5 && p6 && p7 && p8 && p9 && p10 && p11;
+      const statusEl = document.getElementById('overall-status-text');
+      const badgeEl = document.getElementById('active-verdict-badge');
 
-      const verdictText = overallPass ? 'PASS' : 'FAIL';
-      document.getElementById('overall-status-text').innerText = overallPass ? 'PASSED — Conforms to OIML R 76-1:2006' : 'FAILED — Does Not Conform to MPE Requirements';
-      document.getElementById('overall-status-text').className = overallPass ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold';
-
-      document.getElementById('active-verdict-badge').innerText = `OVERALL: ${verdictText}`;
-      document.getElementById('active-verdict-badge').className = overallPass ? 'badge-pass text-xs font-bold px-2.5 py-1 rounded-full' : 'badge-fail text-xs font-bold px-2.5 py-1 rounded-full';
+      if (verdictText === 'PASS') {
+        statusEl.innerText = 'PASSED — Conforms to OIML R 76-1:2006';
+        statusEl.className = 'text-emerald-400 font-bold';
+        badgeEl.innerText = 'OVERALL: PASS';
+        badgeEl.className = 'badge-pass text-xs font-bold px-2.5 py-1 rounded-full';
+      } else if (verdictText === 'FAIL') {
+        statusEl.innerText = 'FAILED — Does Not Conform to MPE Requirements';
+        statusEl.className = 'text-rose-400 font-bold';
+        badgeEl.innerText = 'OVERALL: FAIL';
+        badgeEl.className = 'badge-fail text-xs font-bold px-2.5 py-1 rounded-full';
+      } else {
+        statusEl.innerText = 'INCOMPLETE — Test Observations Pending';
+        statusEl.className = 'text-amber-400 font-bold';
+        badgeEl.innerText = 'OVERALL: INCOMPLETE';
+        badgeEl.className = 'badge-inc text-xs font-bold px-2.5 py-1 rounded-full';
+      }
 
       // Update current report object in REPORTS_DB
       const rep = REPORTS_DB.find(r => r.id === currentReportId);
       if (rep) {
-        rep.mfr = document.getElementById('inp-manufacturer').value;
-        rep.model = document.getElementById('inp-model').value;
+        rep.mfr = document.getElementById('inp-manufacturer').value || 'Unspecified Manufacturer';
+        rep.model = document.getElementById('inp-model').value || 'Unspecified Model';
         rep.verdict = verdictText;
-        rep.status = rep.signature ? 'approved' : 'in_progress';
+        rep.status = rep.signature ? 'approved' : (verdictText === 'INCOMPLETE' ? 'in_progress' : 'under_review');
       }
 
       renderDashboardReports();
@@ -1463,21 +1703,16 @@
       currentReportId = rep.id;
 
       document.getElementById('active-report-no').innerText = rep.number;
-      document.getElementById('active-verdict-badge').innerText = `OVERALL: ${rep.verdict}`;
-      document.getElementById('active-verdict-badge').className = rep.verdict==='PASS' ? 'badge-pass text-xs font-bold px-2.5 py-1 rounded-full' : rep.verdict==='FAIL' ? 'badge-fail text-xs font-bold px-2.5 py-1 rounded-full' : 'badge-inc text-xs font-bold px-2.5 py-1 rounded-full';
       document.getElementById('active-instrument-title').innerText = `${rep.mfr} — ${rep.model}`;
 
-      document.getElementById('inp-manufacturer').value = rep.mfr;
-      document.getElementById('inp-model').value = rep.model;
-
-      if (rep.verdict === 'FAIL') {
-        // Set a failing input to demonstrate
-        document.getElementById('ecc-4').value = 10.05;
+      if (id === 1) {
+        populatePassSampleValues();
+      } else if (id === 2) {
+        populateFailSampleValues();
       } else {
-        document.getElementById('ecc-4').value = 9.99;
+        resetFormFieldsToBlank();
       }
 
-      suggestWeighingLoads();
       evaluateAllTests();
       showTab('generator');
     }
