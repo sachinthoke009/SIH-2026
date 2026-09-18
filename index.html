@@ -1654,8 +1654,20 @@
       return flags;
     }
 
+    function evalSpecs() {
+      const mfr = document.getElementById('inp-manufacturer')?.value;
+      const model = document.getElementById('inp-model')?.value;
+      const serial = document.getElementById('inp-serial')?.value;
+      if (!mfr || !model || !serial || mfr.trim() === '' || model.trim() === '' || serial.trim() === '') {
+        updateBadge('v-specs', 'INCOMPLETE');
+        return 'INCOMPLETE';
+      }
+      updateBadge('v-specs', 'PASS');
+      return 'PASS';
+    }
+
     function evaluateAllTests() {
-      const p1 = 'PASS';
+      const p1 = evalSpecs();
       const p2 = evalWeighing();
       const p3 = evalRepeatability();
       const p4 = evalEccentricity();
@@ -1956,6 +1968,7 @@
 
     // Initialize
     window.onload = function() {
+      createNewReport();
       renderDashboardReports();
       renderRepository();
       showTab('dashboard');
