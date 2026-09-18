@@ -908,6 +908,72 @@
           Apply Cryptographic Signature
         </button>
       </div>
+  <!-- REGISTER NEW INSTRUMENT & CREATE REPORT MODAL -->
+  <div id="modal-create-report" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 text-slate-900 no-print">
+    <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-plus-circle text-teal-700"></i> Register New NAWI Instrument & Create Report
+        </h3>
+        <button onclick="toggleCreateReportModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <p class="text-slate-500">Enter the instrument specifications to generate a dedicated OIML R 76 Type Evaluation test workspace.</p>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Manufacturer Name *</label>
+            <input type="text" id="modal-mfr" placeholder="e.g. Avery India / Essae-Teraoka" class="w-full border rounded px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-teal-500">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Instrument Model *</label>
+            <input type="text" id="modal-model" placeholder="e.g. DS-252 / PB-600" class="w-full border rounded px-3 py-1.5 text-xs font-semibold">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Serial Number</label>
+            <input type="text" id="modal-serial" placeholder="e.g. SN-2026-00123" class="w-full border rounded px-3 py-1.5 text-xs font-mono">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Accuracy Class (OIML R 76)</label>
+            <select id="modal-class" class="w-full border rounded px-3 py-1.5 text-xs font-semibold bg-amber-50 border-amber-300">
+              <option value="I">Class I (Special Accuracy)</option>
+              <option value="II">Class II (High Accuracy)</option>
+              <option value="III" selected>Class III (Medium Accuracy)</option>
+              <option value="IIII">Class IIII (Ordinary Accuracy)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Max (Cap)</label>
+            <input type="number" step="any" id="modal-max" value="30" class="w-full border rounded px-2 py-1.5 text-xs font-semibold">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Min (Cap)</label>
+            <input type="number" step="any" id="modal-min" value="0.2" class="w-full border rounded px-2 py-1.5 text-xs font-semibold">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Interval (e)</label>
+            <input type="number" step="any" id="modal-e" value="0.01" class="w-full border rounded px-2 py-1.5 text-xs font-semibold">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Interval (d)</label>
+            <input type="number" step="any" id="modal-d" value="0.01" class="w-full border rounded px-2 py-1.5 text-xs font-semibold">
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 border-t pt-3">
+        <button onclick="toggleCreateReportModal()" class="border rounded px-4 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50">Cancel</button>
+        <button onclick="submitCreateReportModal()" class="bg-teal-700 hover:bg-teal-800 text-white font-bold px-4 py-1.5 rounded-lg text-xs shadow flex items-center gap-1.5">
+          <i class="fa-solid fa-file-signature"></i> Generate Test Workspace
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1247,7 +1313,34 @@
       document.getElementById('ecc-4').value = 10.05;
     }
 
+    function toggleCreateReportModal() {
+      const modal = document.getElementById('modal-create-report');
+      if (modal) {
+        modal.classList.toggle('hidden');
+        if (!modal.classList.contains('hidden')) {
+          document.getElementById('modal-mfr').value = '';
+          document.getElementById('modal-model').value = '';
+          document.getElementById('modal-serial').value = `SN-${Date.now().toString().slice(-6)}`;
+        }
+      }
+    }
+
     function createNewReport() {
+      toggleCreateReportModal();
+    }
+
+    function submitCreateReportModal() {
+      const mfr = document.getElementById('modal-mfr').value.trim() || 'New Instrument';
+      const model = document.getElementById('modal-model').value.trim() || 'Type-Evaluation';
+      const serial = document.getElementById('modal-serial').value.trim() || `SN-${Date.now().toString().slice(-6)}`;
+      const cls = document.getElementById('modal-class').value;
+      const max = parseFloat(document.getElementById('modal-max').value) || 30;
+      const min = parseFloat(document.getElementById('modal-min').value) || 0.2;
+      const e = parseFloat(document.getElementById('modal-e').value) || 0.01;
+      const d = parseFloat(document.getElementById('modal-d').value) || 0.01;
+
+      toggleCreateReportModal();
+
       const nextNum = REPORTS_DB.length + 1;
       const year = new Date().getFullYear();
       const reportNo = `RRSL/NAWI/${year}/${String(nextNum).padStart(4, '0')}`;
@@ -1255,10 +1348,10 @@
       const newRep = {
         id: Date.now(),
         number: reportNo,
-        mfr: 'New Instrument',
-        model: 'Type-Evaluation',
-        class: 'III',
-        cap: '30 kg',
+        mfr: mfr,
+        model: model,
+        class: cls,
+        cap: `${max} kg`,
         status: 'in_progress',
         verdict: 'INCOMPLETE',
         signature: null
@@ -1267,13 +1360,21 @@
       REPORTS_DB.unshift(newRep);
       currentReportId = newRep.id;
 
-      // Populate fresh blank inputs
+      // Populate fresh workspace header
       document.getElementById('active-report-no').innerText = newRep.number;
       document.getElementById('active-verdict-badge').innerText = `OVERALL: INCOMPLETE`;
       document.getElementById('active-verdict-badge').className = `badge-inc text-xs font-bold px-2.5 py-1 rounded-full`;
-      document.getElementById('active-instrument-title').innerText = `New Test Report Workspace`;
+      document.getElementById('active-instrument-title').innerText = `${mfr} — ${model}`;
 
       resetFormFieldsToBlank();
+      document.getElementById('inp-manufacturer').value = mfr;
+      document.getElementById('inp-model').value = model;
+      document.getElementById('inp-serial').value = serial;
+      document.getElementById('inp-class').value = cls;
+      document.getElementById('inp-max').value = max;
+      document.getElementById('inp-min').value = min;
+      document.getElementById('inp-e').value = e;
+      document.getElementById('inp-d').value = d;
 
       evaluateAllTests();
       renderDashboardReports();
