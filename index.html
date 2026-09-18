@@ -208,7 +208,8 @@
 
 
     <!-- 2. TEST REPORT GENERATOR WORKSPACE VIEW -->
-    <div id="vi      <!-- TOP CONTROL CARD -->
+    <div id="view-generator" class="hidden space-y-6">
+      <!-- TOP CONTROL CARD -->
       <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2">
@@ -390,7 +391,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Manufacturer Name</label>
-                <input type="text" id="inp-manufacturer" value="" placeholder="Enter Manufacturer Name (e.g. Avery / Essae)" oninput="evaluateAllTests()" class="w-full border rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-teal-500">
+                <input type="text" id="inp-manufacturer" value="" placeholder="Enter Manufacturer Name" oninput="evaluateAllTests()" class="w-full border rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-teal-500">
               </div>
               <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Instrument Model</label>
@@ -494,7 +495,7 @@
               <div class="p-4 rounded-lg border border-slate-200 bg-slate-50 space-y-2">
                 <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                   <span>Series 1: Load = 15 kg (50% Max) | MPE = &plusmn;0.01 kg</span>
-                  <span id="rep-status-1" class="badge-pass px-2 py-0.5 rounded">PASS (Spread: 0.01 kg &le; MPE)</span>
+                  <span id="rep-status-1" class="badge-inc px-2 py-0.5 rounded">INCOMPLETE</span>
                 </div>
                 <div class="grid grid-cols-5 md:grid-cols-10 gap-2">
                   <input type="number" step="any" placeholder="—" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
@@ -513,19 +514,19 @@
               <div class="p-4 rounded-lg border border-slate-200 bg-slate-50 space-y-2">
                 <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                   <span>Series 2: Load = 30 kg (100% Max) | MPE = &plusmn;0.015 kg</span>
-                  <span id="rep-status-2" class="badge-pass px-2 py-0.5 rounded">PASS (Spread: 0.01 kg &le; MPE)</span>
+                  <span id="rep-status-2" class="badge-inc px-2 py-0.5 rounded">INCOMPLETE</span>
                 </div>
                 <div class="grid grid-cols-5 md:grid-cols-10 gap-2">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
-                  <input type="number" step="any" value="30.02" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
-                  <input type="number" step="any" value="30.02" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" placeholder="—" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" placeholder="—" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" placeholder="—" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" placeholder="—" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" placeholder="—" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" placeholder="—" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" placeholder="—" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" placeholder="—" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" placeholder="—" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" placeholder="—" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
                 </div>
               </div>
             </div>
@@ -536,11 +537,11 @@
             <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Eccentric Loading (Corner Load Test)</h3>
             <p class="text-xs text-slate-500">Apply load of 1/3 Max (10 kg) at 5 positions (1: Center, 2: Front-Left, 3: Front-Right, 4: Back-Right, 5: Back-Left). Error at each location shall not exceed MPE (&plusmn;0.01 kg).</p>
             <div class="grid grid-cols-5 gap-3 text-center text-xs">
-              <div class="p-3 border rounded bg-slate-50">Pos 1 (Center)<br><input type="number" id="ecc-1" value="10.00" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
-              <div class="p-3 border rounded bg-slate-50">Pos 2 (FL)<br><input type="number" id="ecc-2" value="10.01" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
-              <div class="p-3 border rounded bg-slate-50">Pos 3 (FR)<br><input type="number" id="ecc-3" value="10.00" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
-              <div class="p-3 border rounded bg-slate-50">Pos 4 (BR)<br><input type="number" id="ecc-4" value="9.99" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
-              <div class="p-3 border rounded bg-slate-50">Pos 5 (BL)<br><input type="number" id="ecc-5" value="10.00" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 1 (Center)<br><input type="number" id="ecc-1" placeholder="—" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 2 (FL)<br><input type="number" id="ecc-2" placeholder="—" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 3 (FR)<br><input type="number" id="ecc-3" placeholder="—" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 4 (BR)<br><input type="number" id="ecc-4" placeholder="—" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 5 (BL)<br><input type="number" id="ecc-5" placeholder="—" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
             </div>
             <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
               <span>Corner Load Evaluation:</span>
@@ -556,15 +557,15 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
               <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
                 <label class="font-semibold block">Preset Tare Load (kg)</label>
-                <input type="number" id="tare-load" value="5.00" oninput="evalTare()" class="w-full border rounded px-2.5 py-1.5 font-bold text-slate-900">
+                <input type="number" id="tare-load" placeholder="—" oninput="evalTare()" class="w-full border rounded px-2.5 py-1.5 font-bold text-slate-900">
               </div>
               <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
                 <label class="font-semibold block">Net Test Load Applied (kg)</label>
-                <input type="number" id="tare-net" value="10.00" oninput="evalTare()" class="w-full border rounded px-2.5 py-1.5 font-bold text-slate-900">
+                <input type="number" id="tare-net" placeholder="—" oninput="evalTare()" class="w-full border rounded px-2.5 py-1.5 font-bold text-slate-900">
               </div>
               <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
                 <label class="font-semibold block">Observed Net Indication (kg)</label>
-                <input type="number" id="tare-ind" value="10.00" oninput="evalTare()" class="w-full border rounded px-2.5 py-1.5 font-bold text-slate-900">
+                <input type="number" id="tare-ind" placeholder="—" oninput="evalTare()" class="w-full border rounded px-2.5 py-1.5 font-bold text-slate-900">
               </div>
             </div>
 
@@ -585,15 +586,15 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
               <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
                 <label class="font-semibold block">Base Test Load (kg)</label>
-                <input type="number" id="disc-base" value="10.00" oninput="evalDiscrimination()" class="w-full border rounded px-2.5 py-1.5 font-bold">
+                <input type="number" id="disc-base" placeholder="—" oninput="evalDiscrimination()" class="w-full border rounded px-2.5 py-1.5 font-bold">
               </div>
               <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
                 <label class="font-semibold block">Extra Load Added (1.4d = 0.014 kg)</label>
-                <input type="number" id="disc-extra" value="0.014" oninput="evalDiscrimination()" class="w-full border rounded px-2.5 py-1.5 font-bold text-amber-800">
+                <input type="number" id="disc-extra" placeholder="—" oninput="evalDiscrimination()" class="w-full border rounded px-2.5 py-1.5 font-bold text-amber-800">
               </div>
               <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
                 <label class="font-semibold block">Observed New Indication (kg)</label>
-                <input type="number" id="disc-ind" value="10.01" oninput="evalDiscrimination()" class="w-full border rounded px-2.5 py-1.5 font-bold text-emerald-800">
+                <input type="number" id="disc-ind" placeholder="—" oninput="evalDiscrimination()" class="w-full border rounded px-2.5 py-1.5 font-bold text-emerald-800">
               </div>
             </div>
 
@@ -613,17 +614,17 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
               <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
                 <label class="font-semibold block">Initial Zero-Setting Range (% Max)</label>
-                <input type="number" id="zero-init" value="12.5" oninput="evalZero()" class="w-full border rounded px-2.5 py-1.5 font-bold">
+                <input type="number" id="zero-init" placeholder="—" oninput="evalZero()" class="w-full border rounded px-2.5 py-1.5 font-bold">
                 <span class="text-[10px] text-slate-500">Permitted: &le; 20%</span>
               </div>
               <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
                 <label class="font-semibold block">Semi-Auto Zero Range (% Max)</label>
-                <input type="number" id="zero-semiauto" value="2.0" oninput="evalZero()" class="w-full border rounded px-2.5 py-1.5 font-bold">
+                <input type="number" id="zero-semiauto" placeholder="—" oninput="evalZero()" class="w-full border rounded px-2.5 py-1.5 font-bold">
                 <span class="text-[10px] text-slate-500">Permitted: &le; 4%</span>
               </div>
               <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
                 <label class="font-semibold block">Zero Setting Error (in scale units e)</label>
-                <input type="number" id="zero-err" value="0.10" oninput="evalZero()" class="w-full border rounded px-2.5 py-1.5 font-bold">
+                <input type="number" id="zero-err" placeholder="—" oninput="evalZero()" class="w-full border rounded px-2.5 py-1.5 font-bold">
                 <span class="text-[10px] text-slate-500">Permitted: &le; &plusmn;0.25e</span>
               </div>
             </div>
@@ -642,19 +643,19 @@
             <div class="grid grid-cols-4 gap-3 text-xs text-center">
               <div class="p-3 border rounded bg-slate-50">
                 <span class="font-semibold block">0 Min (Switch-on)</span>
-                <input type="number" id="warm-0" value="15.00" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
+                <input type="number" id="warm-0" placeholder="—" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
               </div>
               <div class="p-3 border rounded bg-slate-50">
                 <span class="font-semibold block">5 Min</span>
-                <input type="number" id="warm-5" value="15.00" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
+                <input type="number" id="warm-5" placeholder="—" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
               </div>
               <div class="p-3 border rounded bg-slate-50">
                 <span class="font-semibold block">15 Min</span>
-                <input type="number" id="warm-15" value="15.01" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
+                <input type="number" id="warm-15" placeholder="—" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
               </div>
               <div class="p-3 border rounded bg-slate-50">
                 <span class="font-semibold block">30 Min</span>
-                <input type="number" id="warm-30" value="15.00" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
+                <input type="number" id="warm-30" placeholder="—" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
               </div>
             </div>
 
@@ -684,28 +685,28 @@
                   <tr>
                     <td class="p-2 border font-bold">20 Â°C (Ref)</td>
                     <td class="p-2 border">15.00 kg</td>
-                    <td class="p-2 border"><input type="number" id="temp-20a" value="15.00" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
+                    <td class="p-2 border"><input type="number" id="temp-20a" placeholder="—" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
                     <td class="p-2 border">0.00e</td>
                     <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
                   </tr>
                   <tr>
                     <td class="p-2 border font-bold">40 Â°C (Max T)</td>
                     <td class="p-2 border">15.00 kg</td>
-                    <td class="p-2 border"><input type="number" id="temp-40" value="15.01" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
+                    <td class="p-2 border"><input type="number" id="temp-40" placeholder="—" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
                     <td class="p-2 border">0.20e</td>
                     <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
                   </tr>
                   <tr>
                     <td class="p-2 border font-bold">-10 Â°C (Min T)</td>
                     <td class="p-2 border">15.00 kg</td>
-                    <td class="p-2 border"><input type="number" id="temp-10" value="14.99" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
+                    <td class="p-2 border"><input type="number" id="temp-10" placeholder="—" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
                     <td class="p-2 border">0.30e</td>
                     <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
                   </tr>
                   <tr>
                     <td class="p-2 border font-bold">5 Â°C</td>
                     <td class="p-2 border">15.00 kg</td>
-                    <td class="p-2 border"><input type="number" id="temp-5" value="15.00" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
+                    <td class="p-2 border"><input type="number" id="temp-5" placeholder="—" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
                     <td class="p-2 border">0.10e</td>
                     <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
                   </tr>
@@ -727,15 +728,15 @@
             <div class="grid grid-cols-3 gap-3 text-xs text-center">
               <div class="p-3 border rounded bg-slate-50">
                 <span class="font-semibold block">Nominal (230 V AC)</span>
-                <input type="number" id="volt-230" value="15.00" oninput="evalVoltage()" class="border w-full mt-1 text-center font-bold">
+                <input type="number" id="volt-230" placeholder="—" oninput="evalVoltage()" class="border w-full mt-1 text-center font-bold">
               </div>
               <div class="p-3 border rounded bg-slate-50">
                 <span class="font-semibold block">-15% Voltage (195.5 V)</span>
-                <input type="number" id="volt-195" value="15.00" oninput="evalVoltage()" class="border w-full mt-1 text-center font-bold">
+                <input type="number" id="volt-195" placeholder="—" oninput="evalVoltage()" class="border w-full mt-1 text-center font-bold">
               </div>
               <div class="p-3 border rounded bg-slate-50">
                 <span class="font-semibold block">+10% Voltage (253 V)</span>
-                <input type="number" id="volt-253" value="15.01" oninput="evalVoltage()" class="border w-full mt-1 text-center font-bold">
+                <input type="number" id="volt-253" placeholder="—" oninput="evalVoltage()" class="border w-full mt-1 text-center font-bold">
               </div>
             </div>
 
@@ -751,14 +752,14 @@
             <p class="text-xs text-slate-500">8 periodic measurements over a 14-day test cycle at half-capacity load. Maximum deviation from mean error shall not exceed 0.5 &times; |MPE|.</p>
 
             <div class="grid grid-cols-4 md:grid-cols-8 gap-2 text-xs text-center">
-              <div class="p-2 border rounded bg-slate-50">Day 1<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
-              <div class="p-2 border rounded bg-slate-50">Day 3<br><input type="number" step="any" value="15.01" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
-              <div class="p-2 border rounded bg-slate-50">Day 5<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
-              <div class="p-2 border rounded bg-slate-50">Day 7<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
-              <div class="p-2 border rounded bg-slate-50">Day 9<br><input type="number" step="any" value="15.01" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
-              <div class="p-2 border rounded bg-slate-50">Day 11<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
-              <div class="p-2 border rounded bg-slate-50">Day 13<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
-              <div class="p-2 border rounded bg-slate-50">Day 14<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 1<br><input type="number" step="any" placeholder="—" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 3<br><input type="number" step="any" placeholder="—" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 5<br><input type="number" step="any" placeholder="—" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 7<br><input type="number" step="any" placeholder="—" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 9<br><input type="number" step="any" placeholder="—" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 11<br><input type="number" step="any" placeholder="—" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 13<br><input type="number" step="any" placeholder="—" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 14<br><input type="number" step="any" placeholder="—" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
             </div>
 
             <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
