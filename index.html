@@ -981,13 +981,14 @@
   <script>
     // Sample Reports Data Repository State
     let REPORTS_DB = [
+      { id: 101, number: 'RRSL/NAWI/2026/0005', mfr: 'New Instrument (Pending)', model: 'Type-Evaluation', class: 'III', cap: '30 kg', status: 'in_progress', verdict: 'INCOMPLETE', signature: null },
       { id: 1, number: 'RRSL/NAWI/2025/0041', mfr: 'Essae-Teraoka Pvt. Ltd.', model: 'DS-252', class: 'III', cap: '30 kg', status: 'approved', verdict: 'PASS', signature: 'SHA256-8F9A12B4' },
       { id: 2, number: 'RRSL/NAWI/2025/0047', mfr: 'Avery India Ltd.', model: 'PB-600', class: 'III', cap: '600 kg', status: 'under_review', verdict: 'FAIL', signature: null },
       { id: 3, number: 'RRSL/NAWI/2026/0003', mfr: 'Sansui Electronics Pvt. Ltd.', model: 'WB-60T', class: 'III', cap: '60000 kg', status: 'in_progress', verdict: 'INCOMPLETE', signature: null },
       { id: 4, number: 'RRSL/NAWI/2026/0004', mfr: 'Contech Instruments Ltd.', model: 'CA-224', class: 'II', cap: '220 g', status: 'approved', verdict: 'PASS', signature: 'SHA256-3C7E91D2' },
     ];
 
-    let currentReportId = 1;
+    let currentReportId = 101;
     let currentRole = 'tester';
 
     function switchRole(role) {
