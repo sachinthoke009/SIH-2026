@@ -463,7 +463,7 @@ export function evaluate(data: TestData, spec: InstrumentSpec, rules: R76RuleCon
   }
 
   const applicable = tests.filter((t) => t.verdict !== "NOT_TESTED");
-  const summary = {
+  const summaryObj = {
     passed: tests.filter((t) => t.verdict === "PASS").length,
     failed: tests.filter((t) => t.verdict === "FAIL").length,
     incomplete: tests.filter((t) => t.verdict === "INCOMPLETE").length,
@@ -471,11 +471,56 @@ export function evaluate(data: TestData, spec: InstrumentSpec, rules: R76RuleCon
   };
   let overall: Verdict = "INCOMPLETE";
   if (applicable.length === 0) overall = "INCOMPLETE";
-  else if (summary.failed > 0) overall = "FAIL";
-  else if (summary.incomplete > 0) overall = "INCOMPLETE";
+  else if (summaryObj.failed > 0) overall = "FAIL";
+  else if (summaryObj.incomplete > 0) overall = "INCOMPLETE";
   else overall = "PASS";
 
-  return { tests, overall, integrityFlags: tests.flatMap((t) => t.integrityFlags), summary };
+  const ghostFlags = detectGhostModeFlags(data);
+  const allFlags = [...tests.flatMap((t) => t.integrityFlags), ...ghostFlags];
+
+  return { tests, overall, integrityFlags: allFlags, summary: summaryObj };
+}
+
+export function detectGhostModeFlags(data: TestData): string[] {
+  const flags: string[] = [];
+
+  // 1. Zero Variance in Repeatability Series
+  if (data.repeatability?.applicable && data.repeatability.series) {
+    for (let i = 0; i < data.repeatability.series.length; i++) {
+      const s = data.repeatability.series[i];
+      const valid = (s.readings || []).filter((v): v is number => v !== null && v !== undefined);
+      if (valid.length >= 5) {
+        const unique = new Set(valid.map((v) => v.toFixed(6)));
+        if (unique.size === 1) {
+          flags.push(`Ghost Mode Alert: Zero variance detected across ${valid.length} repeat weighings in Series ${i + 1} (${valid[0]} kg). Synthetic/hand-typed data pattern suspect.`);
+        }
+      }
+    }
+  }
+
+  // 2. Uniform Corner Loading in Eccentricity
+  if (data.eccentricity?.applicable && data.eccentricity.positions) {
+    const valid = data.eccentricity.positions.map((p) => p.indication).filter((v): v is number => v !== null && v !== undefined);
+    if (valid.length >= 4) {
+      const unique = new Set(valid.map((v) => v.toFixed(6)));
+      if (unique.size === 1) {
+        flags.push(`Ghost Mode Alert: Identical corner load indications (${valid[0]} kg) across all platform positions. Unrealistic transducer behavior.`);
+      }
+    }
+  }
+
+  // 3. Perfect Zero-Error Synthetic Pattern
+  if (data.weighing?.applicable && data.weighing.rows) {
+    const rows = data.weighing.rows.filter((r) => r.indUp !== null);
+    if (rows.length >= 5) {
+      const allZeroError = rows.every((r) => r.indUp === r.load);
+      if (allZeroError) {
+        flags.push(`Ghost Mode Alert: Zero error across all ${rows.length} test loads. Synthetic perfect dataset flagged for reviewer audit.`);
+      }
+    }
+  }
+
+  return flags;
 }
 
 /** helper: convert a kg threshold into the instrument's unit */

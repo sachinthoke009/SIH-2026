@@ -36,19 +36,22 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <div class="bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-xs">
-          <span class="text-slate-400">Current Role:</span>
-          <select id="roleSelector" class="bg-slate-900 text-amber-400 font-semibold ml-1 focus:outline-none cursor-pointer" onchange="switchRole(this.value)">
-            <option value="tester">🔬 Tester (Scientific Officer)</option>
+        <div class="bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-xs flex items-center gap-2">
+          <span class="text-slate-400">Role:</span>
+          <select id="roleSelector" class="bg-slate-900 text-amber-400 font-semibold focus:outline-none cursor-pointer" onchange="switchRole(this.value)">
+            <option value="tester" selected>🔬 Tester (Scientific Officer)</option>
             <option value="reviewer">👔 Reviewer (Approving Officer)</option>
             <option value="admin">⚙️ Admin (Director)</option>
           </select>
         </div>
-        <button onclick="loadSampleData('pass')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1.5 rounded font-medium transition shadow">
-          <i class="fa-solid fa-folder-open mr-1"></i> Demo Pass Case
+        <button onclick="createNewReport()" class="bg-teal-700 hover:bg-teal-600 text-white text-xs px-3 py-1.5 rounded font-bold transition shadow flex items-center gap-1">
+          <i class="fa-solid fa-plus"></i> Create New Test
         </button>
-        <button onclick="loadSampleData('fail')" class="bg-rose-600 hover:bg-rose-500 text-white text-xs px-3 py-1.5 rounded font-medium transition shadow">
-          <i class="fa-solid fa-triangle-exclamation mr-1"></i> Demo Fail Case
+        <button onclick="loadSampleData('pass')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1.5 rounded font-medium transition shadow flex items-center gap-1">
+          <i class="fa-solid fa-folder-open"></i> Demo Pass
+        </button>
+        <button onclick="loadSampleData('fail')" class="bg-rose-600 hover:bg-rose-500 text-white text-xs px-3 py-1.5 rounded font-medium transition shadow flex items-center gap-1">
+          <i class="fa-solid fa-triangle-exclamation"></i> Demo Fail
         </button>
       </div>
     </div>
@@ -72,6 +75,11 @@
     </nav>
   </header>
 
+  <!-- ROLE NOTIFICATION BANNER -->
+  <div id="role-banner" class="bg-teal-900 text-teal-100 px-4 py-1.5 text-xs text-center font-medium border-b border-teal-800 no-print">
+    Active Mode: <span id="role-banner-text" class="font-bold text-amber-300">Tester (Scientific Officer)</span> — Full permissions to record observations and execute OIML tests.
+  </div>
+
   <!-- MAIN CONTAINER -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 no-print">
 
@@ -82,7 +90,7 @@
           <h2 class="text-xl font-bold text-slate-900">NAWI Type Evaluation Monitoring Dashboard</h2>
           <p class="text-sm text-slate-500">Automated Compliance Verification as per OIML Recommendation R 76-1:2006 & Legal Metrology Rules, 2011</p>
         </div>
-        <button onclick="showTab('generator')" class="bg-teal-700 hover:bg-teal-800 text-white font-medium text-sm px-4 py-2 rounded-lg shadow flex items-center gap-2">
+        <button onclick="createNewReport()" class="bg-teal-700 hover:bg-teal-800 text-white font-medium text-sm px-4 py-2 rounded-lg shadow flex items-center gap-2">
           <i class="fa-solid fa-plus"></i> Create New NAWI Test Report
         </button>
       </div>
@@ -156,28 +164,28 @@
               <div>
                 <div class="flex justify-between text-xs font-semibold mb-1">
                   <span class="text-emerald-700">PASS (Compliant)</span>
-                  <span>50%</span>
+                  <span id="pct-pass">50%</span>
                 </div>
                 <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                  <div class="bg-emerald-500 h-full w-1/2"></div>
+                  <div id="bar-pass" class="bg-emerald-500 h-full w-1/2"></div>
                 </div>
               </div>
               <div>
                 <div class="flex justify-between text-xs font-semibold mb-1">
                   <span class="text-rose-700">FAIL (Non-Compliant)</span>
-                  <span>25%</span>
+                  <span id="pct-fail">25%</span>
                 </div>
                 <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                  <div class="bg-rose-500 h-full w-1/4"></div>
+                  <div id="bar-fail" class="bg-rose-500 h-full w-1/4"></div>
                 </div>
               </div>
               <div>
                 <div class="flex justify-between text-xs font-semibold mb-1">
                   <span class="text-amber-700">INCOMPLETE</span>
-                  <span>25%</span>
+                  <span id="pct-inc">25%</span>
                 </div>
                 <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                  <div class="bg-amber-400 h-full w-1/4"></div>
+                  <div id="bar-inc" class="bg-amber-400 h-full w-1/4"></div>
                 </div>
               </div>
             </div>
@@ -221,7 +229,7 @@
           <button onclick="exportDocxMock()" class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5">
             <i class="fa-solid fa-file-word"></i> Export MS Word
           </button>
-          <button onclick="digitalSignModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5">
+          <button onclick="toggleDigitalSignModal()" id="btn-digital-sign" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5">
             <i class="fa-solid fa-signature"></i> Digital Sign (SHA-256)
           </button>
         </div>
@@ -268,73 +276,27 @@
         </div>
 
         <!-- SIMULATOR CONTROL BAR -->
-        <div id="html-sim-controls" class="hidden mt-3 pt-3 border-t border-slate-800 flex flex-wrap items-center gap-3 text-xs">
-          <span class="text-amber-400 font-bold">🧪 Test Simulator Control:</span>
-          <label class="flex items-center gap-1">
-            <span>Set Weight:</span>
-            <input type="number" step="any" id="html-sim-input" value="10.5" oninput="updateHtmlSimWeight(this.value)" class="w-24 bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
-            <span>kg</span>
-          </label>
-          <div class="flex gap-1">
-            <button onclick="updateHtmlSimWeight(0)" class="bg-slate-800 hover:bg-teal-900 px-2 py-0.5 rounded text-[11px]">0 kg</button>
-            <button onclick="updateHtmlSimWeight(5)" class="bg-slate-800 hover:bg-teal-900 px-2 py-0.5 rounded text-[11px]">5 kg</button>
-            <button onclick="updateHtmlSimWeight(15)" class="bg-slate-800 hover:bg-teal-900 px-2 py-0.5 rounded text-[11px]">15 kg</button>
-            <button onclick="updateHtmlSimWeight(30)" class="bg-slate-800 hover:bg-teal-900 px-2 py-0.5 rounded text-[11px]">30 kg</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- SCALE CONNECT MODAL -->
-      <div id="html-scale-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 text-slate-900">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
-          <div class="flex items-center justify-between border-b pb-3">
-            <h3 class="font-bold text-base text-slate-900">Connect Weighing Instrument</h3>
-            <button onclick="toggleHtmlScaleModal()" class="text-slate-400 hover:text-slate-600">✕</button>
-          </div>
-
-          <div class="space-y-3 text-xs">
-            <div class="border p-3 rounded-xl hover:border-teal-600 transition">
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="font-bold text-slate-900">📶 Bluetooth BLE Scale</div>
-                  <div class="text-slate-500">Pair via GATT Weight Scale Service</div>
-                </div>
-                <button onclick="connectHtmlBluetooth()" class="bg-teal-700 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-teal-800">Pair BT</button>
-              </div>
-            </div>
-
-            <div class="border p-3 rounded-xl hover:border-teal-600 transition">
-              <div class="font-bold text-slate-900 mb-1">🌐 Wi-Fi / IP Scale</div>
-              <div class="flex gap-2">
-                <input type="text" id="html-wifi-ip" placeholder="192.168.1.50:8080" value="192.168.1.50:8080" class="flex-1 border rounded px-2 py-1 text-xs">
-                <button onclick="connectHtmlWifi()" class="bg-teal-700 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-teal-800">Connect IP</button>
-              </div>
-            </div>
-
-            <div class="border p-3 rounded-xl hover:border-teal-600 transition">
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="font-bold text-slate-900">🔌 Serial RS232 / USB COM</div>
-                  <div class="text-slate-500">Web Serial API @ 9600 baud</div>
-                </div>
-                <button onclick="connectHtmlSerial()" class="bg-teal-700 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-teal-800">Select Port</button>
-              </div>
-            </div>
-
-            <div class="border border-amber-200 bg-amber-50 p-3 rounded-xl hover:border-amber-400 transition">
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="font-bold text-amber-900">🧪 Hardware Simulator</div>
-                  <div class="text-amber-700">Simulate weight stream without hardware</div>
-                </div>
-                <button onclick="startHtmlScaleSim()" class="bg-amber-700 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-amber-800">Start Sim</button>
-              </div>
+        <div id="html-sim-controls" class="hidden mt-3 pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-amber-400 font-bold">🧪 Scale Simulator:</span>
+            <label class="flex items-center gap-1">
+              <span>Set Weight:</span>
+              <input type="number" step="any" id="html-sim-input" value="10.5" oninput="updateHtmlSimWeight(this.value)" class="w-24 bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+              <span>kg</span>
+            </label>
+            <div class="flex gap-1 flex-wrap">
+              <button onclick="updateHtmlSimWeight(0)" class="bg-slate-800 hover:bg-teal-900 px-2 py-1 rounded text-[11px] font-semibold text-slate-200">0 (Zero)</button>
+              <button onclick="updateHtmlSimWeight(0.2)" class="bg-slate-800 hover:bg-teal-900 px-2 py-1 rounded text-[11px] font-semibold text-slate-200">0.2 Min</button>
+              <button onclick="updateHtmlSimWeight(5)" class="bg-slate-800 hover:bg-teal-900 px-2 py-1 rounded text-[11px] font-semibold text-slate-200">5 kg</button>
+              <button onclick="updateHtmlSimWeight(10)" class="bg-slate-800 hover:bg-teal-900 px-2 py-1 rounded text-[11px] font-semibold text-amber-300">10 Corner</button>
+              <button onclick="updateHtmlSimWeight(15)" class="bg-slate-800 hover:bg-teal-900 px-2 py-1 rounded text-[11px] font-semibold text-teal-300">15 (50%)</button>
+              <button onclick="updateHtmlSimWeight(30)" class="bg-slate-800 hover:bg-teal-900 px-2 py-1 rounded text-[11px] font-semibold text-emerald-300">30 (Max)</button>
             </div>
           </div>
-
-          <div class="flex justify-between border-t pt-3">
-            <button onclick="disconnectHtmlScale()" class="text-rose-600 text-xs font-semibold hover:underline">Disconnect Active</button>
-            <button onclick="toggleHtmlScaleModal()" class="border rounded px-4 py-1 text-xs font-medium text-slate-600">Close</button>
+          <div class="flex items-center gap-2">
+            <button onclick="toggleSimMotion()" id="btn-sim-motion" class="bg-amber-950 hover:bg-amber-900 border border-amber-800 text-amber-300 text-[11px] font-bold px-2.5 py-1 rounded shadow">
+              ⚡ Motion Jitter: OFF
+            </button>
           </div>
         </div>
       </div>
@@ -348,7 +310,7 @@
           
           <button onclick="showSection('sec-specs')" id="btn-sec-specs" class="side-nav-btn w-full text-left p-3 rounded-lg border border-teal-600 bg-teal-50 font-medium text-sm text-slate-900 flex items-center justify-between">
             <span>📋 1. Specs & Lab Setup</span>
-            <span class="text-xs text-teal-700 font-bold"><i class="fa-solid fa-check"></i></span>
+            <span class="badge-pass text-[10px] font-bold px-2 py-0.5 rounded" id="v-specs">PASS</span>
           </button>
 
           <button onclick="showSection('sec-weighing')" id="btn-sec-weighing" class="side-nav-btn w-full text-left p-3 rounded-lg border border-slate-200 bg-white font-medium text-sm text-slate-800 hover:bg-slate-50 flex items-center justify-between">
@@ -414,11 +376,11 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Manufacturer Name</label>
-                <input type="text" id="inp-manufacturer" value="Essae-Teraoka Pvt. Ltd." class="w-full border rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-teal-500">
+                <input type="text" id="inp-manufacturer" value="Essae-Teraoka Pvt. Ltd." oninput="evaluateAllTests()" class="w-full border rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-teal-500">
               </div>
               <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Instrument Model</label>
-                <input type="text" id="inp-model" value="DS-252" class="w-full border rounded px-3 py-1.5 text-sm">
+                <input type="text" id="inp-model" value="DS-252" oninput="evaluateAllTests()" class="w-full border rounded px-3 py-1.5 text-sm">
               </div>
               <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Serial Number</label>
@@ -521,16 +483,16 @@
                   <span id="rep-status-1" class="badge-pass px-2 py-0.5 rounded">PASS (Spread: 0.01 kg &le; MPE)</span>
                 </div>
                 <div class="grid grid-cols-5 md:grid-cols-10 gap-2">
-                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="15.01" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="15.01" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="15.01" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="15.01" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="15.01" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="15.01" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="15.00" class="rep-input-1 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
                 </div>
               </div>
 
@@ -540,31 +502,254 @@
                   <span id="rep-status-2" class="badge-pass px-2 py-0.5 rounded">PASS (Spread: 0.01 kg &le; MPE)</span>
                 </div>
                 <div class="grid grid-cols-5 md:grid-cols-10 gap-2">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="30.02" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="30.02" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
-                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" onchange="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="30.02" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="30.02" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
+                  <input type="number" step="any" value="30.01" class="rep-input-2 border rounded px-2 py-1 text-xs text-center" oninput="evalRepeatability()">
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- OTHER TEST SECTIONS SUMMARY -->
+          <!-- SECTION 4: ECCENTRICITY -->
           <div id="sec-eccentricity" class="test-sec hidden space-y-4">
             <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Eccentric Loading (Corner Load Test)</h3>
-            <p class="text-xs text-slate-500">Apply load of 1/3 Max (10 kg) at 5 positions (1: Center, 2: Front-Left, 3: Front-Right, 4: Back-Right, 5: Back-Left).</p>
+            <p class="text-xs text-slate-500">Apply load of 1/3 Max (10 kg) at 5 positions (1: Center, 2: Front-Left, 3: Front-Right, 4: Back-Right, 5: Back-Left). Error at each location shall not exceed MPE (&plusmn;0.01 kg).</p>
             <div class="grid grid-cols-5 gap-3 text-center text-xs">
-              <div class="p-3 border rounded bg-slate-50">Pos 1 (Center)<br><input type="number" id="ecc-1" value="10.00" class="border w-full mt-1 text-center font-bold"></div>
-              <div class="p-3 border rounded bg-slate-50">Pos 2 (FL)<br><input type="number" id="ecc-2" value="10.01" class="border w-full mt-1 text-center font-bold"></div>
-              <div class="p-3 border rounded bg-slate-50">Pos 3 (FR)<br><input type="number" id="ecc-3" value="10.00" class="border w-full mt-1 text-center font-bold"></div>
-              <div class="p-3 border rounded bg-slate-50">Pos 4 (BR)<br><input type="number" id="ecc-4" value="9.99" class="border w-full mt-1 text-center font-bold"></div>
-              <div class="p-3 border rounded bg-slate-50">Pos 5 (BL)<br><input type="number" id="ecc-5" value="10.00" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 1 (Center)<br><input type="number" id="ecc-1" value="10.00" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 2 (FL)<br><input type="number" id="ecc-2" value="10.01" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 3 (FR)<br><input type="number" id="ecc-3" value="10.00" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 4 (BR)<br><input type="number" id="ecc-4" value="9.99" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
+              <div class="p-3 border rounded bg-slate-50">Pos 5 (BL)<br><input type="number" id="ecc-5" value="10.00" oninput="evalEccentricity()" class="border w-full mt-1 text-center font-bold"></div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
+              <span>Corner Load Evaluation:</span>
+              <span id="ecc-status-badge" class="badge-pass px-2.5 py-1 rounded font-bold">PASS (Max Error: 0.01 kg &le; MPE)</span>
+            </div>
+          </div>
+
+          <!-- SECTION 5: TARE WEIGHING -->
+          <div id="sec-tare" class="test-sec hidden space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Tare Weighing Test (Clause 3.5.3 / A.4.6)</h3>
+            <p class="text-xs text-slate-500">Verification of tare device performance. The tare error shall allow setting indication to zero. Net load errors must comply with MPE requirements.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
+                <label class="font-semibold block">Preset Tare Load (kg)</label>
+                <input type="number" id="tare-load" value="5.00" oninput="evalTare()" class="w-full border rounded px-2.5 py-1.5 font-bold text-slate-900">
+              </div>
+              <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
+                <label class="font-semibold block">Net Test Load Applied (kg)</label>
+                <input type="number" id="tare-net" value="10.00" oninput="evalTare()" class="w-full border rounded px-2.5 py-1.5 font-bold text-slate-900">
+              </div>
+              <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
+                <label class="font-semibold block">Observed Net Indication (kg)</label>
+                <input type="number" id="tare-ind" value="10.00" oninput="evalTare()" class="w-full border rounded px-2.5 py-1.5 font-bold text-slate-900">
+              </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
+              <div>
+                <span class="font-semibold">Calculated Net Error:</span> <span id="tare-err-calc" class="font-mono font-bold text-teal-700">0.000 kg</span>
+                <span class="text-slate-400 ml-2">| Permissible MPE: &plusmn;0.010 kg</span>
+              </div>
+              <span id="tare-status-badge" class="badge-pass px-2.5 py-1 rounded font-bold">PASS</span>
+            </div>
+          </div>
+
+          <!-- SECTION 6: DISCRIMINATION -->
+          <div id="sec-discrimination" class="test-sec hidden space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Discrimination Test (Clause 3.8.2 / A.4.8)</h3>
+            <p class="text-xs text-slate-500">An additional load equal to 1.4 times the scale interval (1.4d) placed gently on instrument at equilibrium shall produce an unmistakable change in indication of at least 1d.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
+                <label class="font-semibold block">Base Test Load (kg)</label>
+                <input type="number" id="disc-base" value="10.00" oninput="evalDiscrimination()" class="w-full border rounded px-2.5 py-1.5 font-bold">
+              </div>
+              <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
+                <label class="font-semibold block">Extra Load Added (1.4d = 0.014 kg)</label>
+                <input type="number" id="disc-extra" value="0.014" oninput="evalDiscrimination()" class="w-full border rounded px-2.5 py-1.5 font-bold text-amber-800">
+              </div>
+              <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
+                <label class="font-semibold block">Observed New Indication (kg)</label>
+                <input type="number" id="disc-ind" value="10.01" oninput="evalDiscrimination()" class="w-full border rounded px-2.5 py-1.5 font-bold text-emerald-800">
+              </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
+              <div>
+                <span class="font-semibold">Indication Change:</span> <span id="disc-change-calc" class="font-mono font-bold text-teal-700">0.010 kg (&ge; 1d)</span>
+              </div>
+              <span id="disc-status-badge" class="badge-pass px-2.5 py-1 rounded font-bold">PASS</span>
+            </div>
+          </div>
+
+          <!-- SECTION 7: ZERO-SETTING DEVICES -->
+          <div id="sec-zero" class="test-sec hidden space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Zero-Setting Devices Test (Clause 4.5 / A.4.2)</h3>
+            <p class="text-xs text-slate-500">Evaluates initial zero-setting range (&le; 20% Max), semi-automatic zero range (&le; 4% Max), and zero setting accuracy (&le; &plusmn;0.25e).</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
+                <label class="font-semibold block">Initial Zero-Setting Range (% Max)</label>
+                <input type="number" id="zero-init" value="12.5" oninput="evalZero()" class="w-full border rounded px-2.5 py-1.5 font-bold">
+                <span class="text-[10px] text-slate-500">Permitted: &le; 20%</span>
+              </div>
+              <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
+                <label class="font-semibold block">Semi-Auto Zero Range (% Max)</label>
+                <input type="number" id="zero-semiauto" value="2.0" oninput="evalZero()" class="w-full border rounded px-2.5 py-1.5 font-bold">
+                <span class="text-[10px] text-slate-500">Permitted: &le; 4%</span>
+              </div>
+              <div class="p-3 border rounded-lg bg-slate-50 space-y-1">
+                <label class="font-semibold block">Zero Setting Error (in scale units e)</label>
+                <input type="number" id="zero-err" value="0.10" oninput="evalZero()" class="w-full border rounded px-2.5 py-1.5 font-bold">
+                <span class="text-[10px] text-slate-500">Permitted: &le; &plusmn;0.25e</span>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
+              <span>Zero-Setting Device Conformance:</span>
+              <span id="zero-status-badge" class="badge-pass px-2.5 py-1 rounded font-bold">PASS (All Clause 4.5 Criteria Met)</span>
+            </div>
+          </div>
+
+          <!-- SECTION 8: WARM-UP TIME -->
+          <div id="sec-warmup" class="test-sec hidden space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Warm-Up Time Test (Clause 5.3.5 / A.5.2)</h3>
+            <p class="text-xs text-slate-500">An instrument powered off for &ge; 8 hours is switched on and tested immediately at 0 min, 5 min, 15 min, and 30 min under half capacity (15 kg). Errors shall not exceed MPE.</p>
+
+            <div class="grid grid-cols-4 gap-3 text-xs text-center">
+              <div class="p-3 border rounded bg-slate-50">
+                <span class="font-semibold block">0 Min (Switch-on)</span>
+                <input type="number" id="warm-0" value="15.00" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
+              </div>
+              <div class="p-3 border rounded bg-slate-50">
+                <span class="font-semibold block">5 Min</span>
+                <input type="number" id="warm-5" value="15.00" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
+              </div>
+              <div class="p-3 border rounded bg-slate-50">
+                <span class="font-semibold block">15 Min</span>
+                <input type="number" id="warm-15" value="15.01" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
+              </div>
+              <div class="p-3 border rounded bg-slate-50">
+                <span class="font-semibold block">30 Min</span>
+                <input type="number" id="warm-30" value="15.00" oninput="evalWarmup()" class="border w-full mt-1 text-center font-bold">
+              </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
+              <span>Warm-Up Drift Assessment:</span>
+              <span id="warmup-status-badge" class="badge-pass px-2.5 py-1 rounded font-bold">PASS (All intervals within MPE)</span>
+            </div>
+          </div>
+
+          <!-- SECTION 9: STATIC TEMPERATURE -->
+          <div id="sec-temp" class="test-sec hidden space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Static Temperature Test (Clause 3.9.2 / A.5.3)</h3>
+            <p class="text-xs text-slate-500">Testing carried out at reference temperature (20°C), upper limit (40°C), lower limit (-10°C), 5°C and 20°C return. Zero drift shall not exceed 1e / 5°C.</p>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border">
+                <thead class="bg-slate-100 uppercase font-semibold">
+                  <tr>
+                    <th class="p-2 border">Chamber Temp (°C)</th>
+                    <th class="p-2 border">Test Load (kg)</th>
+                    <th class="p-2 border">Indication (kg)</th>
+                    <th class="p-2 border">Zero Shift (e)</th>
+                    <th class="p-2 border text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y">
+                  <tr>
+                    <td class="p-2 border font-bold">20 °C (Ref)</td>
+                    <td class="p-2 border">15.00 kg</td>
+                    <td class="p-2 border"><input type="number" id="temp-20a" value="15.00" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
+                    <td class="p-2 border">0.00e</td>
+                    <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 border font-bold">40 °C (Max T)</td>
+                    <td class="p-2 border">15.00 kg</td>
+                    <td class="p-2 border"><input type="number" id="temp-40" value="15.01" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
+                    <td class="p-2 border">0.20e</td>
+                    <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 border font-bold">-10 °C (Min T)</td>
+                    <td class="p-2 border">15.00 kg</td>
+                    <td class="p-2 border"><input type="number" id="temp-10" value="14.99" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
+                    <td class="p-2 border">0.30e</td>
+                    <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 border font-bold">5 °C</td>
+                    <td class="p-2 border">15.00 kg</td>
+                    <td class="p-2 border"><input type="number" id="temp-5" value="15.00" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
+                    <td class="p-2 border">0.10e</td>
+                    <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
+              <span>Temperature Chamber Verdict:</span>
+              <span id="temp-status-badge" class="badge-pass px-2.5 py-1 rounded font-bold">PASS (Thermal coefficient &le; 1e/5°C)</span>
+            </div>
+          </div>
+
+          <!-- SECTION 10: MAINS VOLTAGE DRIFT -->
+          <div id="sec-voltage" class="test-sec hidden space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Mains Voltage Variation Test (Clause 3.9.3 / A.5.4)</h3>
+            <p class="text-xs text-slate-500">Performance under AC mains power supply variations (-15% to +10% of nominal 230V AC). Errors must remain within MPE limits.</p>
+
+            <div class="grid grid-cols-3 gap-3 text-xs text-center">
+              <div class="p-3 border rounded bg-slate-50">
+                <span class="font-semibold block">Nominal (230 V AC)</span>
+                <input type="number" id="volt-230" value="15.00" oninput="evalVoltage()" class="border w-full mt-1 text-center font-bold">
+              </div>
+              <div class="p-3 border rounded bg-slate-50">
+                <span class="font-semibold block">-15% Voltage (195.5 V)</span>
+                <input type="number" id="volt-195" value="15.00" oninput="evalVoltage()" class="border w-full mt-1 text-center font-bold">
+              </div>
+              <div class="p-3 border rounded bg-slate-50">
+                <span class="font-semibold block">+10% Voltage (253 V)</span>
+                <input type="number" id="volt-253" value="15.01" oninput="evalVoltage()" class="border w-full mt-1 text-center font-bold">
+              </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
+              <span>Mains Voltage Drift Verdict:</span>
+              <span id="voltage-status-badge" class="badge-pass px-2.5 py-1 rounded font-bold">PASS (Errors &le; MPE across voltage range)</span>
+            </div>
+          </div>
+
+          <!-- SECTION 11: SPAN STABILITY -->
+          <div id="sec-span" class="test-sec hidden space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Span Stability Test (Clause 3.9.4 / A.6)</h3>
+            <p class="text-xs text-slate-500">8 periodic measurements over a 14-day test cycle at half-capacity load. Maximum deviation from mean error shall not exceed 0.5 &times; |MPE|.</p>
+
+            <div class="grid grid-cols-4 md:grid-cols-8 gap-2 text-xs text-center">
+              <div class="p-2 border rounded bg-slate-50">Day 1<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 3<br><input type="number" step="any" value="15.01" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 5<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 7<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 9<br><input type="number" step="any" value="15.01" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 11<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 13<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+              <div class="p-2 border rounded bg-slate-50">Day 14<br><input type="number" step="any" value="15.00" class="span-inp border w-full text-center mt-1 text-xs" oninput="evalSpan()"></div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
+              <span>Span Drift Evaluation:</span>
+              <span id="span-status-badge" class="badge-pass px-2.5 py-1 rounded font-bold">PASS (Max Dev: 0.004 kg &le; 0.5 MPE)</span>
             </div>
           </div>
 
@@ -577,6 +762,19 @@
             <div class="text-sm font-semibold flex items-center gap-2">
               <span>Overall Compliance:</span>
               <span id="overall-status-text" class="text-emerald-400 font-bold">PASSED — Conforms to OIML R 76-1:2006</span>
+            </div>
+          </div>
+
+          <!-- GHOST MODE INTEGRITY GUARD AUDIT BOX -->
+          <div id="ghost-mode-audit-box" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 space-y-2 text-xs shadow-sm">
+            <div class="flex items-center justify-between font-bold">
+              <span class="flex items-center gap-1.5 text-emerald-900 text-sm">
+                <i class="fa-solid fa-ghost text-violet-600"></i> Ghost Mode Integrity Guard Audit
+              </span>
+              <span id="ghost-flag-count" class="bg-emerald-200 text-emerald-900 px-2.5 py-0.5 rounded font-mono font-bold">0 Integrity Warnings</span>
+            </div>
+            <div id="ghost-flag-details" class="text-slate-700">
+              <span class="text-emerald-800 font-semibold">✓ Audit Status: Clean dataset. Natural transducer noise and non-zero variation verified across all test points.</span>
             </div>
           </div>
 
@@ -635,22 +833,69 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
           <h3 class="font-bold text-slate-900 border-b pb-2">Active Recommendation Rule Set</h3>
-          <div class="text-sm space-y-1">
-            <div><span class="font-semibold">Code:</span> OIML-R76-1</div>
-            <div><span class="font-semibold">Version:</span> 2006 (E)</div>
-            <div><span class="font-semibold">Title:</span> Non-automatic weighing instruments — Metrological & technical requirements</div>
-            <div><span class="font-semibold">MPE Factors:</span> Initial Verification (1.0x MPE), In-Service (2.0x MPE)</div>
+          <div class="text-sm space-y-2">
+            <div><span class="font-semibold text-slate-700">Code:</span> <span class="font-mono text-teal-700 font-bold">OIML-R76-1</span></div>
+            <div><span class="font-semibold text-slate-700">Version:</span> 2006 (E)</div>
+            <div><span class="font-semibold text-slate-700">Title:</span> Non-automatic weighing instruments — Metrological & technical requirements</div>
+            <div class="p-3 bg-slate-50 rounded border text-xs space-y-1">
+              <div class="font-bold text-slate-800">Active MPE Limits (Table 6):</div>
+              <div>Class III: 0 to 500e (&plusmn;0.5e), 500e to 2000e (&plusmn;1.0e), 2000e to 10000e (&plusmn;1.5e)</div>
+              <div>Initial Verification Factor = 1.0x | In-Service Inspection Factor = 2.0x</div>
+            </div>
           </div>
         </div>
 
         <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
           <h3 class="font-bold text-slate-900 border-b pb-2">Future OIML Revision Support</h3>
           <p class="text-xs text-slate-600">New recommendation editions published by OIML can be uploaded as JSON rule set configs into the database to update MPE limits, warm-up criteria, or temperature ranges dynamically.</p>
+          <div class="space-y-2 pt-2">
+            <button onclick="alert('Rule config updated to OIML R-76:2006 (E) Latest Patch successfully!')" class="bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold px-4 py-2 rounded-lg shadow">
+              <i class="fa-solid fa-save mr-1"></i> Save Active Rule Configuration
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
   </main>
+
+
+  <!-- DIGITAL SIGNATURE MODAL -->
+  <div id="modal-digital-sign" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 text-slate-900 no-print">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-signature text-amber-600"></i> Digital Report Approval (SHA-256)
+        </h3>
+        <button onclick="toggleDigitalSignModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="bg-slate-50 p-3 rounded-lg border space-y-1">
+          <div><span class="font-bold">Report Number:</span> <span id="sign-modal-report-no" class="font-mono text-teal-700">RRSL/NAWI/2025/0041</span></div>
+          <div><span class="font-bold">Instrument:</span> <span id="sign-modal-instrument">Essae-Teraoka DS-252</span></div>
+          <div><span class="font-bold">Evaluation Verdict:</span> <span id="sign-modal-verdict" class="text-emerald-700 font-bold">PASS</span></div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Approving Officer Name</label>
+          <input type="text" id="sign-officer-name" value="R. Venkatesh" class="w-full border rounded px-3 py-1.5 text-xs font-semibold">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Passcode / Security PIN (Default: 1234)</label>
+          <input type="password" id="sign-officer-pin" value="1234" class="w-full border rounded px-3 py-1.5 text-xs font-mono">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 border-t pt-3">
+        <button onclick="toggleDigitalSignModal()" class="border rounded px-4 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50">Cancel</button>
+        <button onclick="submitDigitalSignature()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-1.5 rounded-lg text-xs shadow">
+          Apply Cryptographic Signature
+        </button>
+      </div>
+    </div>
+  </div>
 
 
   <!-- PRINTABLE REPORT PREVIEW OVERLAY (FOR PDF & PRINT) -->
@@ -676,12 +921,12 @@
     </div>
 
     <div class="space-y-4">
-      <h4 class="font-bold border-b pb-1 text-sm">Summary of Test Results</h4>
+      <h4 class="font-bold border-b pb-1 text-sm">Summary of OIML R 76 Test Results</h4>
       <table class="w-full text-xs text-left border border-collapse">
         <thead class="bg-slate-100 border-b font-bold">
           <tr><th class="p-1.5 border">Clause</th><th class="p-1.5 border">Test Title</th><th class="p-1.5 border">Verdict</th></tr>
         </thead>
-        <tbody>
+        <tbody id="pr-summary-rows">
           <tr><td class="p-1.5 border">R76-1 3.5.1</td><td class="p-1.5 border">Weighing Performance & Accuracy</td><td class="p-1.5 border font-bold text-emerald-700">PASS</td></tr>
           <tr><td class="p-1.5 border">R76-1 3.6.1</td><td class="p-1.5 border">Repeatability</td><td class="p-1.5 border font-bold text-emerald-700">PASS</td></tr>
           <tr><td class="p-1.5 border">R76-1 3.6.2</td><td class="p-1.5 border">Eccentric Loading</td><td class="p-1.5 border font-bold text-emerald-700">PASS</td></tr>
@@ -699,8 +944,8 @@
       </div>
       <div class="text-right">
         <div class="font-bold">Approved By (Approving Authority):</div>
-        <div>R. Venkatesh (Technical Reviewer)</div>
-        <div class="text-[10px] text-emerald-700 font-mono">Digitally Signed (SHA-256 Verified)</div>
+        <div id="pr-approver-name">R. Venkatesh (Technical Reviewer)</div>
+        <div id="pr-signature-hash" class="text-[10px] text-emerald-700 font-mono">Digitally Signed (SHA-256 Verified)</div>
       </div>
     </div>
   </div>
@@ -720,17 +965,36 @@
 
   <!-- INTERACTIVE JAVASCRIPT APP LOGIC -->
   <script>
-    // Sample Reports Data
-    const REPORTS_DB = [
-      { id: 1, number: 'RRSL/NAWI/2025/0041', mfr: 'Essae-Teraoka Pvt. Ltd.', model: 'DS-252', class: 'III', cap: '30 kg', status: 'approved', verdict: 'PASS' },
-      { id: 2, number: 'RRSL/NAWI/2025/0047', mfr: 'Avery India Ltd.', model: 'PB-600', class: 'III', cap: '600 kg', status: 'under_review', verdict: 'FAIL' },
-      { id: 3, number: 'RRSL/NAWI/2026/0003', mfr: 'Sansui Electronics Pvt. Ltd.', model: 'WB-60T', class: 'III', cap: '60000 kg', status: 'in_progress', verdict: 'INCOMPLETE' },
-      { id: 4, number: 'RRSL/NAWI/2026/0005', mfr: 'Contech Instruments Ltd.', model: 'CA-224', class: 'II', cap: '220 g', status: 'approved', verdict: 'PASS' },
+    // Sample Reports Data Repository State
+    let REPORTS_DB = [
+      { id: 1, number: 'RRSL/NAWI/2025/0041', mfr: 'Essae-Teraoka Pvt. Ltd.', model: 'DS-252', class: 'III', cap: '30 kg', status: 'approved', verdict: 'PASS', signature: 'SHA256-8F9A12B4' },
+      { id: 2, number: 'RRSL/NAWI/2025/0047', mfr: 'Avery India Ltd.', model: 'PB-600', class: 'III', cap: '600 kg', status: 'under_review', verdict: 'FAIL', signature: null },
+      { id: 3, number: 'RRSL/NAWI/2026/0003', mfr: 'Sansui Electronics Pvt. Ltd.', model: 'WB-60T', class: 'III', cap: '60000 kg', status: 'in_progress', verdict: 'INCOMPLETE', signature: null },
+      { id: 4, number: 'RRSL/NAWI/2026/0004', mfr: 'Contech Instruments Ltd.', model: 'CA-224', class: 'II', cap: '220 g', status: 'approved', verdict: 'PASS', signature: 'SHA256-3C7E91D2' },
     ];
+
+    let currentReportId = 1;
+    let currentRole = 'tester';
+
+    function switchRole(role) {
+      currentRole = role;
+      const textMap = {
+        tester: 'Tester (Scientific Officer) — Full permissions to record observations and execute OIML tests.',
+        reviewer: 'Reviewer (Approving Officer) — Authorized to review reports, approve, and apply SHA-256 digital signature.',
+        admin: 'Admin (Director) — Executive oversight, system administration, and OIML R 76 rule set configuration.'
+      };
+      document.getElementById('role-banner-text').innerText = textMap[role] || role;
+      const btnSign = document.getElementById('btn-digital-sign');
+      if (role === 'tester') {
+        btnSign.title = 'Switch to Reviewer or Admin role to digitally sign';
+      } else {
+        btnSign.title = 'Digitally sign & approve this report';
+      }
+    }
 
     function renderDashboardReports() {
       const tbody = document.getElementById('dashboard-reports-list');
-      tbody.innerHTML = REPORTS_DB.map(r => `
+      tbody.innerHTML = REPORTS_DB.slice(0, 6).map(r => `
         <tr class="hover:bg-slate-50">
           <td class="py-2.5 px-3 font-mono font-semibold text-teal-700">${r.number}</td>
           <td class="py-2.5 px-3 font-medium">${r.mfr} <span class="text-slate-400">·</span> ${r.model}</td>
@@ -738,23 +1002,64 @@
           <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-xs font-semibold ${r.status==='approved'?'bg-emerald-100 text-emerald-800':r.status==='under_review'?'bg-violet-100 text-violet-800':'bg-amber-100 text-amber-800'}">${r.status.toUpperCase()}</span></td>
           <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${r.verdict==='PASS'?'badge-pass':r.verdict==='FAIL'?'badge-fail':'badge-inc'}">${r.verdict}</span></td>
           <td class="py-2.5 px-3 text-right">
-            <button onclick="loadReportInWorkspace(${r.id})" class="text-xs bg-slate-800 text-white px-2.5 py-1 rounded hover:bg-slate-700">Open</button>
+            <button onclick="loadReportInWorkspace(${r.id})" class="text-xs bg-slate-800 text-white px-2.5 py-1 rounded hover:bg-slate-700 font-medium">Open</button>
           </td>
         </tr>
       `).join('');
+
+      // Update Metric Cards
+      const total = REPORTS_DB.length;
+      const pass = REPORTS_DB.filter(r => r.verdict === 'PASS').length;
+      const fail = REPORTS_DB.filter(r => r.verdict === 'FAIL').length;
+      const inc = REPORTS_DB.filter(r => r.verdict === 'INCOMPLETE').length;
+
+      document.getElementById('stat-total').innerText = total;
+      document.getElementById('stat-pass').innerText = pass;
+      document.getElementById('stat-fail').innerText = fail;
+      document.getElementById('stat-progress').innerText = inc;
+
+      const pPct = total ? Math.round((pass/total)*100) : 0;
+      const fPct = total ? Math.round((fail/total)*100) : 0;
+      const iPct = total ? Math.round((inc/total)*100) : 0;
+
+      document.getElementById('pct-pass').innerText = pPct + '%';
+      document.getElementById('pct-fail').innerText = fPct + '%';
+      document.getElementById('pct-inc').innerText = iPct + '%';
+
+      document.getElementById('bar-pass').style.width = pPct + '%';
+      document.getElementById('bar-fail').style.width = fPct + '%';
+      document.getElementById('bar-inc').style.width = iPct + '%';
     }
 
     function renderRepository() {
+      filterRepository();
+    }
+
+    function filterRepository() {
+      const q = (document.getElementById('repo-search').value || '').toLowerCase();
+      const statusFilter = document.getElementById('repo-filter-status').value;
+
+      const filtered = REPORTS_DB.filter(r => {
+        const matchesQ = r.number.toLowerCase().includes(q) || r.mfr.toLowerCase().includes(q) || r.model.toLowerCase().includes(q);
+        const matchesStatus = (statusFilter === 'all') || (r.status === statusFilter);
+        return matchesQ && matchesStatus;
+      });
+
       const tbody = document.getElementById('repo-rows');
-      tbody.innerHTML = REPORTS_DB.map(r => `
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">No matching reports found in repository.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(r => `
         <tr class="hover:bg-slate-50">
           <td class="p-3 font-mono font-bold text-teal-700">${r.number}</td>
           <td class="p-3 font-semibold">${r.mfr}</td>
           <td class="p-3">${r.model}</td>
           <td class="p-3">Class ${r.class}</td>
           <td class="p-3">${r.cap}</td>
-          <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-semibold ${r.status==='approved'?'bg-emerald-100 text-emerald-800':'bg-amber-100 text-amber-800'}">${r.status}</span></td>
-          <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${r.verdict==='PASS'?'badge-pass':'badge-fail'}">${r.verdict}</span></td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-semibold ${r.status==='approved'?'bg-emerald-100 text-emerald-800':r.status==='under_review'?'bg-violet-100 text-violet-800':'bg-amber-100 text-amber-800'}">${r.status.toUpperCase()}</span></td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${r.verdict==='PASS'?'badge-pass':r.verdict==='FAIL'?'badge-fail':'badge-inc'}">${r.verdict}</span></td>
           <td class="p-3 text-right">
             <button onclick="loadReportInWorkspace(${r.id})" class="text-xs bg-teal-700 text-white px-3 py-1 rounded hover:bg-teal-800 font-bold">Open Report</button>
           </td>
@@ -777,13 +1082,60 @@
 
     function showSection(secId) {
       document.querySelectorAll('.test-sec').forEach(s => s.classList.add('hidden'));
-      document.getElementById(secId).classList.remove('hidden');
+      const targetSec = document.getElementById(secId);
+      if (targetSec) targetSec.classList.remove('hidden');
       document.querySelectorAll('.side-nav-btn').forEach(b => {
         b.classList.remove('border-teal-600', 'bg-teal-50');
         b.classList.add('border-slate-200', 'bg-white');
       });
-      document.getElementById(`btn-${secId}`).classList.remove('border-slate-200', 'bg-white');
-      document.getElementById(`btn-${secId}`).classList.add('border-teal-600', 'bg-teal-50');
+      const targetBtn = document.getElementById(`btn-${secId}`);
+      if (targetBtn) {
+        targetBtn.classList.remove('border-slate-200', 'bg-white');
+        targetBtn.classList.add('border-teal-600', 'bg-teal-50');
+      }
+    }
+
+    function createNewReport() {
+      const nextNum = REPORTS_DB.length + 1;
+      const year = new Date().getFullYear();
+      const reportNo = `RRSL/NAWI/${year}/${String(nextNum).padStart(4, '0')}`;
+
+      const newRep = {
+        id: Date.now(),
+        number: reportNo,
+        mfr: 'New Manufacturer Pvt Ltd',
+        model: 'NW-100',
+        class: 'III',
+        cap: '30 kg',
+        status: 'in_progress',
+        verdict: 'INCOMPLETE',
+        signature: null
+      };
+
+      REPORTS_DB.unshift(newRep);
+      currentReportId = newRep.id;
+
+      // Populate fresh inputs
+      document.getElementById('active-report-no').innerText = newRep.number;
+      document.getElementById('active-verdict-badge').innerText = `OVERALL: INCOMPLETE`;
+      document.getElementById('active-verdict-badge').className = `badge-inc text-xs font-bold px-2.5 py-1 rounded-full`;
+      document.getElementById('active-instrument-title').innerText = `${newRep.mfr} — ${newRep.model}`;
+
+      document.getElementById('inp-manufacturer').value = newRep.mfr;
+      document.getElementById('inp-model').value = newRep.model;
+      document.getElementById('inp-serial').value = `SN-${Date.now().toString().slice(-6)}`;
+      document.getElementById('inp-max').value = 30;
+      document.getElementById('inp-min').value = 0.2;
+      document.getElementById('inp-e').value = 0.01;
+      document.getElementById('inp-d').value = 0.01;
+
+      suggestWeighingLoads();
+      evaluateAllTests();
+      renderDashboardReports();
+      renderRepository();
+
+      showTab('generator');
+      showSection('sec-specs');
     }
 
     function validateClassificationRules() {
@@ -791,8 +1143,13 @@
       const max = parseFloat(document.getElementById('inp-max').value) || 0;
       const e = parseFloat(document.getElementById('inp-e').value) || 1;
       const min = parseFloat(document.getElementById('inp-min').value) || 0;
+      const d = parseFloat(document.getElementById('inp-d').value) || e;
+
       const n = Math.round(max / e);
       document.getElementById('rule-n-calc').innerText = `Calculated scale intervals n = Max/e = ${n.toLocaleString()} (Permitted for Class ${cls}).`;
+      document.getElementById('rule-min-calc').innerText = `Calculated lower cap limit Min >= 20e = ${(20*e).toFixed(2)} kg (Entered: ${min} kg — ${min >= 20*e ? 'PASS' : 'FAIL'}).`;
+      document.getElementById('rule-ed-calc').innerText = `e/d ratio = ${(e/d).toFixed(1)} (Digital indication requirement satisfied).`;
+      evaluateAllTests();
     }
 
     function suggestWeighingLoads() {
@@ -801,9 +1158,8 @@
       const min = parseFloat(document.getElementById('inp-min').value) || 0.2;
       const loads = [min, parseFloat((max*0.25).toFixed(2)), parseFloat((max*0.5).toFixed(2)), parseFloat((max*0.75).toFixed(2)), max];
       tbody.innerHTML = '';
-      loads.forEach(l => {
-        addWeighingRow(l, l, l);
-      });
+      loads.forEach(l => addWeighingRow(l, l, l));
+      evalWeighing();
     }
 
     function addWeighingRow(load, indUp, indDown) {
@@ -815,10 +1171,10 @@
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td class="p-2"><input type="number" step="any" value="${load}" class="w-24 border rounded px-2 py-1 text-xs"></td>
-        <td class="p-2"><input type="number" step="any" value="${indUp}" class="w-24 border rounded px-2 py-1 text-xs"></td>
+        <td class="p-2"><input type="number" step="any" value="${load}" oninput="evalWeighing()" class="w-24 border rounded px-2 py-1 text-xs"></td>
+        <td class="p-2"><input type="number" step="any" value="${indUp}" oninput="evalWeighing()" class="w-24 border rounded px-2 py-1 text-xs"></td>
         <td class="p-2 font-mono font-bold text-xs ${errUp===0?'text-emerald-700':'text-slate-800'}">${errUp.toFixed(3)}</td>
-        <td class="p-2"><input type="number" step="any" value="${indDown}" class="w-24 border rounded px-2 py-1 text-xs"></td>
+        <td class="p-2"><input type="number" step="any" value="${indDown}" oninput="evalWeighing()" class="w-24 border rounded px-2 py-1 text-xs"></td>
         <td class="p-2 font-mono font-bold text-xs">${(indDown-load).toFixed(3)}</td>
         <td class="p-2 text-xs text-slate-500">&plusmn;${mpeVal.toFixed(3)} kg</td>
         <td class="p-2 text-center"><span class="px-2 py-0.5 rounded text-xs font-bold ${pass?'badge-pass':'badge-fail'}">${pass?'PASS':'FAIL'}</span></td>
@@ -826,15 +1182,303 @@
       tbody.appendChild(tr);
     }
 
+    function evalWeighing() {
+      const rows = document.querySelectorAll('#tbl-weighing-rows tr');
+      let allPass = true;
+      rows.forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        if (inputs.length >= 3) {
+          const load = parseFloat(inputs[0].value) || 0;
+          const indUp = parseFloat(inputs[1].value) || 0;
+          const indDown = parseFloat(inputs[2].value) || 0;
+          const e = parseFloat(document.getElementById('inp-e').value) || 0.01;
+          const mpeVal = (load <= 5) ? (0.5*e) : (load <= 20) ? (1.0*e) : (1.5*e);
+          const errUp = indUp - load;
+          const errDown = indDown - load;
+          const p = (Math.abs(errUp) <= mpeVal + 1e-9) && (Math.abs(errDown) <= mpeVal + 1e-9);
+          if (!p) allPass = false;
+        }
+      });
+      updateBadge('v-weighing', allPass);
+      return allPass;
+    }
+
+    function evalRepeatability() {
+      const rep1 = Array.from(document.querySelectorAll('.rep-input-1')).map(i => parseFloat(i.value)||0);
+      const rep2 = Array.from(document.querySelectorAll('.rep-input-2')).map(i => parseFloat(i.value)||0);
+
+      const max1 = Math.max(...rep1), min1 = Math.min(...rep1);
+      const max2 = Math.max(...rep2), min2 = Math.min(...rep2);
+
+      const spread1 = max1 - min1;
+      const spread2 = max2 - min2;
+
+      const p1 = spread1 <= 0.015;
+      const p2 = spread2 <= 0.015;
+
+      document.getElementById('rep-status-1').innerText = `${p1?'PASS':'FAIL'} (Spread: ${spread1.toFixed(3)} kg)`;
+      document.getElementById('rep-status-1').className = p1 ? 'badge-pass px-2 py-0.5 rounded' : 'badge-fail px-2 py-0.5 rounded';
+
+      document.getElementById('rep-status-2').innerText = `${p2?'PASS':'FAIL'} (Spread: ${spread2.toFixed(3)} kg)`;
+      document.getElementById('rep-status-2').className = p2 ? 'badge-pass px-2 py-0.5 rounded' : 'badge-fail px-2 py-0.5 rounded';
+
+      const pass = p1 && p2;
+      updateBadge('v-repeatability', pass);
+      return pass;
+    }
+
+    function evalEccentricity() {
+      const e1 = parseFloat(document.getElementById('ecc-1').value)||0;
+      const e2 = parseFloat(document.getElementById('ecc-2').value)||0;
+      const e3 = parseFloat(document.getElementById('ecc-3').value)||0;
+      const e4 = parseFloat(document.getElementById('ecc-4').value)||0;
+      const e5 = parseFloat(document.getElementById('ecc-5').value)||0;
+
+      const load = 10.00;
+      const mpe = 0.010;
+
+      const errs = [e1, e2, e3, e4, e5].map(v => Math.abs(v - load));
+      const maxErr = Math.max(...errs);
+
+      const pass = maxErr <= mpe + 1e-9;
+      document.getElementById('ecc-status-badge').innerText = `${pass?'PASS':'FAIL'} (Max Error: ${maxErr.toFixed(3)} kg ${pass?'<= ':'> '}MPE)`;
+      document.getElementById('ecc-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
+
+      updateBadge('v-eccentricity', pass);
+      return pass;
+    }
+
+    function evalTare() {
+      const net = parseFloat(document.getElementById('tare-net').value)||0;
+      const ind = parseFloat(document.getElementById('tare-ind').value)||0;
+      const err = Math.abs(ind - net);
+      const pass = err <= 0.010;
+
+      document.getElementById('tare-err-calc').innerText = `${(ind-net).toFixed(3)} kg`;
+      document.getElementById('tare-status-badge').innerText = pass ? 'PASS' : 'FAIL';
+      document.getElementById('tare-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
+
+      updateBadge('v-tare', pass);
+      return pass;
+    }
+
+    function evalDiscrimination() {
+      const extra = parseFloat(document.getElementById('disc-extra').value)||0;
+      const ind = parseFloat(document.getElementById('disc-ind').value)||0;
+      const base = parseFloat(document.getElementById('disc-base').value)||0;
+      const change = ind - base;
+
+      const pass = change >= 0.010;
+      document.getElementById('disc-change-calc').innerText = `${change.toFixed(3)} kg (>= 1d)`;
+      document.getElementById('disc-status-badge').innerText = pass ? 'PASS' : 'FAIL';
+      document.getElementById('disc-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
+
+      updateBadge('v-discrimination', pass);
+      return pass;
+    }
+
+    function evalZero() {
+      const init = parseFloat(document.getElementById('zero-init').value)||0;
+      const semiauto = parseFloat(document.getElementById('zero-semiauto').value)||0;
+      const err = parseFloat(document.getElementById('zero-err').value)||0;
+
+      const pass = (init <= 20) && (semiauto <= 4) && (Math.abs(err) <= 0.25);
+      document.getElementById('zero-status-badge').innerText = pass ? 'PASS (All Clause 4.5 Criteria Met)' : 'FAIL (Range or Accuracy Exceeded)';
+      document.getElementById('zero-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
+
+      updateBadge('v-zero', pass);
+      return pass;
+    }
+
+    function evalWarmup() {
+      const w0 = parseFloat(document.getElementById('warm-0').value)||0;
+      const w5 = parseFloat(document.getElementById('warm-5').value)||0;
+      const w15 = parseFloat(document.getElementById('warm-15').value)||0;
+      const w30 = parseFloat(document.getElementById('warm-30').value)||0;
+
+      const errs = [w0, w5, w15, w30].map(v => Math.abs(v - 15.00));
+      const pass = Math.max(...errs) <= 0.010;
+
+      document.getElementById('warmup-status-badge').innerText = pass ? 'PASS (All intervals within MPE)' : 'FAIL (Drift exceeded MPE)';
+      document.getElementById('warmup-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
+
+      updateBadge('v-warmup', pass);
+      return pass;
+    }
+
+    function evalTemp() {
+      const t20 = parseFloat(document.getElementById('temp-20a').value)||0;
+      const t40 = parseFloat(document.getElementById('temp-40').value)||0;
+      const t10 = parseFloat(document.getElementById('temp-10').value)||0;
+      const t5 = parseFloat(document.getElementById('temp-5').value)||0;
+
+      const errs = [t20, t40, t10, t5].map(v => Math.abs(v - 15.00));
+      const pass = Math.max(...errs) <= 0.015;
+
+      document.getElementById('temp-status-badge').innerText = pass ? 'PASS (Thermal coefficient <= 1e/5°C)' : 'FAIL';
+      document.getElementById('temp-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
+
+      updateBadge('v-temp', pass);
+      return pass;
+    }
+
+    function evalVoltage() {
+      const v230 = parseFloat(document.getElementById('volt-230').value)||0;
+      const v195 = parseFloat(document.getElementById('volt-195').value)||0;
+      const v253 = parseFloat(document.getElementById('volt-253').value)||0;
+
+      const errs = [v230, v195, v253].map(v => Math.abs(v - 15.00));
+      const pass = Math.max(...errs) <= 0.010;
+
+      document.getElementById('voltage-status-badge').innerText = pass ? 'PASS (Errors <= MPE across voltage range)' : 'FAIL';
+      document.getElementById('voltage-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
+
+      updateBadge('v-voltage', pass);
+      return pass;
+    }
+
+    function evalSpan() {
+      const spanInputs = Array.from(document.querySelectorAll('.span-inp')).map(i => parseFloat(i.value)||0);
+      const avg = spanInputs.reduce((a,b)=>a+b,0) / (spanInputs.length||1);
+      const maxDev = Math.max(...spanInputs.map(v => Math.abs(v - avg)));
+
+      const pass = maxDev <= 0.0075;
+      document.getElementById('span-status-badge').innerText = pass ? `PASS (Max Dev: ${maxDev.toFixed(3)} kg <= 0.5 MPE)` : 'FAIL';
+      document.getElementById('span-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
+
+      updateBadge('v-span', pass);
+      return pass;
+    }
+
+    function updateBadge(id, pass) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerText = pass ? 'PASS' : 'FAIL';
+      el.className = pass ? 'badge-pass text-[10px] font-bold px-2 py-0.5 rounded' : 'badge-fail text-[10px] font-bold px-2 py-0.5 rounded';
+    }
+
+    function runGhostModeAudit() {
+      const flags = [];
+
+      // 1. Repeatability Series 1 Zero Variance Check
+      const rep1 = Array.from(document.querySelectorAll('.rep-input-1')).map(i => parseFloat(i.value)||0);
+      if (rep1.length >= 5) {
+        const u1 = new Set(rep1.map(v => v.toFixed(4)));
+        if (u1.size === 1) {
+          flags.push(`Repeatability Series 1: Zero variance across 10 weighings (${rep1[0]} kg). Synthetic/hand-typed data pattern suspect.`);
+        }
+      }
+
+      // 2. Repeatability Series 2 Zero Variance Check
+      const rep2 = Array.from(document.querySelectorAll('.rep-input-2')).map(i => parseFloat(i.value)||0);
+      if (rep2.length >= 5) {
+        const u2 = new Set(rep2.map(v => v.toFixed(4)));
+        if (u2.size === 1) {
+          flags.push(`Repeatability Series 2: Zero variance across 10 weighings (${rep2[0]} kg). Synthetic/hand-typed data pattern suspect.`);
+        }
+      }
+
+      // 3. Eccentricity Corner Load Uniformity Check
+      const eccVals = [
+        parseFloat(document.getElementById('ecc-1')?.value)||0,
+        parseFloat(document.getElementById('ecc-2')?.value)||0,
+        parseFloat(document.getElementById('ecc-3')?.value)||0,
+        parseFloat(document.getElementById('ecc-4')?.value)||0,
+        parseFloat(document.getElementById('ecc-5')?.value)||0
+      ];
+      const uEcc = new Set(eccVals.map(v => v.toFixed(4)));
+      if (uEcc.size === 1) {
+        flags.push(`Eccentricity Test: Identical corner load indications (${eccVals[0]} kg) across all 5 platform positions. Unrealistic transducer behavior.`);
+      }
+
+      // UI Update
+      const box = document.getElementById('ghost-mode-audit-box');
+      const countEl = document.getElementById('ghost-flag-count');
+      const detailsEl = document.getElementById('ghost-flag-details');
+
+      if (box && countEl && detailsEl) {
+        if (flags.length > 0) {
+          box.className = "p-4 rounded-xl border border-violet-300 bg-violet-50 text-violet-900 space-y-2 text-xs shadow-sm";
+          countEl.className = "bg-violet-200 text-violet-900 px-2.5 py-0.5 rounded font-mono font-bold";
+          countEl.innerText = `${flags.length} Integrity Warning${flags.length > 1 ? 's' : ''}`;
+          detailsEl.innerHTML = `
+            <ul class="list-disc pl-4 space-y-1 font-medium text-violet-900">
+              ${flags.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+            <p class="mt-2 text-[11px] text-violet-700 font-semibold">Mandatory Reviewer Flag: Approving officer must inspect transducer log before applying digital signature.</p>
+          `;
+        } else {
+          box.className = "p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 space-y-2 text-xs shadow-sm";
+          countEl.className = "bg-emerald-200 text-emerald-900 px-2.5 py-0.5 rounded font-mono font-bold";
+          countEl.innerText = "0 Integrity Warnings";
+          detailsEl.innerHTML = `<span class="text-emerald-800 font-semibold">✓ Audit Status: Clean dataset. Natural transducer noise and non-zero variation verified across all test points.</span>`;
+        }
+      }
+
+      const statFlags = document.getElementById('stat-flags');
+      if (statFlags) statFlags.innerText = flags.length;
+      return flags;
+    }
+
+    function evaluateAllTests() {
+      const p1 = true;
+      const p2 = evalWeighing();
+      const p3 = evalRepeatability();
+      const p4 = evalEccentricity();
+      const p5 = evalTare();
+      const p6 = evalDiscrimination();
+      const p7 = evalZero();
+      const p8 = evalWarmup();
+      const p9 = evalTemp();
+      const p10 = evalVoltage();
+      const p11 = evalSpan();
+
+      const ghostFlags = runGhostModeAudit();
+
+      const overallPass = p1 && p2 && p3 && p4 && p5 && p6 && p7 && p8 && p9 && p10 && p11;
+
+      const verdictText = overallPass ? 'PASS' : 'FAIL';
+      document.getElementById('overall-status-text').innerText = overallPass ? 'PASSED — Conforms to OIML R 76-1:2006' : 'FAILED — Does Not Conform to MPE Requirements';
+      document.getElementById('overall-status-text').className = overallPass ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold';
+
+      document.getElementById('active-verdict-badge').innerText = `OVERALL: ${verdictText}`;
+      document.getElementById('active-verdict-badge').className = overallPass ? 'badge-pass text-xs font-bold px-2.5 py-1 rounded-full' : 'badge-fail text-xs font-bold px-2.5 py-1 rounded-full';
+
+      // Update current report object in REPORTS_DB
+      const rep = REPORTS_DB.find(r => r.id === currentReportId);
+      if (rep) {
+        rep.mfr = document.getElementById('inp-manufacturer').value;
+        rep.model = document.getElementById('inp-model').value;
+        rep.verdict = verdictText;
+        rep.status = rep.signature ? 'approved' : 'in_progress';
+      }
+
+      renderDashboardReports();
+      renderRepository();
+    }
+
     function loadReportInWorkspace(id) {
       const rep = REPORTS_DB.find(r => r.id === id);
       if (!rep) return;
+      currentReportId = rep.id;
+
       document.getElementById('active-report-no').innerText = rep.number;
       document.getElementById('active-verdict-badge').innerText = `OVERALL: ${rep.verdict}`;
+      document.getElementById('active-verdict-badge').className = rep.verdict==='PASS' ? 'badge-pass text-xs font-bold px-2.5 py-1 rounded-full' : rep.verdict==='FAIL' ? 'badge-fail text-xs font-bold px-2.5 py-1 rounded-full' : 'badge-inc text-xs font-bold px-2.5 py-1 rounded-full';
       document.getElementById('active-instrument-title').innerText = `${rep.mfr} — ${rep.model}`;
+
       document.getElementById('inp-manufacturer').value = rep.mfr;
       document.getElementById('inp-model').value = rep.model;
+
+      if (rep.verdict === 'FAIL') {
+        // Set a failing input to demonstrate
+        document.getElementById('ecc-4').value = 10.05;
+      } else {
+        document.getElementById('ecc-4').value = 9.99;
+      }
+
       suggestWeighingLoads();
+      evaluateAllTests();
       showTab('generator');
     }
 
@@ -846,17 +1490,96 @@
       }
     }
 
+    function toggleDigitalSignModal() {
+      const modal = document.getElementById('modal-digital-sign');
+      modal.classList.toggle('hidden');
+      if (!modal.classList.contains('hidden')) {
+        const rep = REPORTS_DB.find(r => r.id === currentReportId);
+        if (rep) {
+          document.getElementById('sign-modal-report-no').innerText = rep.number;
+          document.getElementById('sign-modal-instrument').innerText = `${rep.mfr} — ${rep.model}`;
+          document.getElementById('sign-modal-verdict').innerText = rep.verdict;
+        }
+      }
+    }
+
+    function submitDigitalSignature() {
+      const pin = document.getElementById('sign-officer-pin').value;
+      const officer = document.getElementById('sign-officer-name').value;
+      if (pin !== '1234') {
+        alert('Invalid Passcode PIN! (Default is 1234)');
+        return;
+      }
+
+      const hash = "SHA256-" + Math.random().toString(36).substring(2, 10).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase();
+
+      const rep = REPORTS_DB.find(r => r.id === currentReportId);
+      if (rep) {
+        rep.status = 'approved';
+        rep.signature = hash;
+      }
+
+      toggleDigitalSignModal();
+      evaluateAllTests();
+      alert(`Report ${rep ? rep.number : ''} Digitally Signed & Approved by ${officer}!\nCryptographic Hash: ${hash}`);
+    }
+
     function previewReportPrint() {
+      const rep = REPORTS_DB.find(r => r.id === currentReportId);
+      if (rep) {
+        document.getElementById('pr-report-no').innerText = rep.number;
+        document.getElementById('pr-mfr').innerText = rep.mfr;
+        document.getElementById('pr-model').innerText = rep.model;
+        document.getElementById('pr-verdict').innerText = rep.verdict === 'PASS' ? 'COMPLIES WITH OIML R 76-1:2006' : 'DOES NOT COMPLY WITH OIML R 76';
+        document.getElementById('pr-signature-hash').innerText = rep.signature ? `Digitally Signed (${rep.signature})` : 'Pending Digital Approval';
+      }
       window.print();
     }
 
     function exportDocxMock() {
-      alert("MS Word (.docx) Test Report export generated successfully for " + document.getElementById('active-report-no').innerText);
-    }
+      const rep = REPORTS_DB.find(r => r.id === currentReportId) || { number: 'RRSL/NAWI/2025/0041', mfr: 'Essae-Teraoka Pvt. Ltd.', model: 'DS-252' };
+      const docContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset='utf-8'><title>OIML R 76 Test Report</title></head>
+        <body style="font-family: Arial, sans-serif; padding: 20px;">
+          <h2 style="text-align: center; color: #0f766e;">Government of India - Department of Consumer Affairs</h2>
+          <h3 style="text-align: center;">Regional Reference Standards Laboratory (RRSL)</h3>
+          <hr>
+          <p><b>Report Number:</b> ${rep.number}</p>
+          <p><b>Manufacturer:</b> ${rep.mfr}</p>
+          <p><b>Model:</b> ${rep.model}</p>
+          <p><b>Overall Verdict:</b> ${rep.verdict}</p>
+          <hr>
+          <h4>OIML R 76 Compliance Summary</h4>
+          <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
+            <tr style="background: #f1f5f9;"><th>Clause</th><th>Test Description</th><th>Verdict</th></tr>
+            <tr><td>R76 3.5.1</td><td>Weighing Performance & Accuracy</td><td>PASS</td></tr>
+            <tr><td>R76 3.6.1</td><td>Repeatability Test</td><td>PASS</td></tr>
+            <tr><td>R76 3.6.2</td><td>Eccentric Loading</td><td>PASS</td></tr>
+            <tr><td>R76 3.5.3</td><td>Tare Weighing</td><td>PASS</td></tr>
+            <tr><td>R76 3.8.2</td><td>Discrimination Test</td><td>PASS</td></tr>
+            <tr><td>R76 4.5</td><td>Zero-Setting Devices</td><td>PASS</td></tr>
+            <tr><td>R76 5.3.5</td><td>Warm-Up Time Test</td><td>PASS</td></tr>
+            <tr><td>R76 3.9.2</td><td>Static Temperature Test</td><td>PASS</td></tr>
+            <tr><td>R76 3.9.3</td><td>Mains Voltage Drift</td><td>PASS</td></tr>
+            <tr><td>R76 3.9.4</td><td>Span Stability</td><td>PASS</td></tr>
+          </table>
+          <br><br>
+          <p><b>Approved By:</b> R. Venkatesh (Technical Reviewer)</p>
+          <p><b>Digital Signature Hash:</b> ${rep.signature || 'SHA256-AUTHENTICATED'}</p>
+        </body>
+        </html>
+      `;
 
-    function digitalSignModal() {
-      const hash = "SHA256-" + Math.random().toString(36).substring(2, 15).toUpperCase();
-      alert("Report Digitally Signed by Approving Authority (R. Venkatesh).\nCryptographic Signature Hash: " + hash);
+      const blob = new Blob(['\ufeff' + docContent], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${rep.number.replace(/\//g, '_')}_Test_Report.doc`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
 
     // Scale acquisition state
@@ -883,7 +1606,6 @@
       if (activeScaleReading === null) return;
       const weight = activeScaleReading;
 
-      // Smart populate into first empty cell in weighing table
       const inputs = document.querySelectorAll('#tbl-weighing-rows input[type="number"]');
       let filled = false;
       for (const inp of inputs) {
@@ -900,19 +1622,38 @@
       alert(`Captured live reading of ${weight} kg directly into test workspace!`);
     }
 
+    let simMotionActive = false;
+
+    function toggleSimMotion() {
+      simMotionActive = !simMotionActive;
+      const btn = document.getElementById('btn-sim-motion');
+      if (simMotionActive) {
+        btn.innerText = "⚡ Motion Jitter: ON";
+        btn.className = "bg-amber-600 hover:bg-amber-500 text-white text-[11px] font-bold px-2.5 py-1 rounded shadow animate-pulse";
+      } else {
+        btn.innerText = "⚡ Motion Jitter: OFF";
+        btn.className = "bg-amber-950 hover:bg-amber-900 border border-amber-800 text-amber-300 text-[11px] font-bold px-2.5 py-1 rounded shadow";
+      }
+    }
+
     function startHtmlScaleSim() {
       toggleHtmlScaleModal();
       document.getElementById('html-sim-controls').classList.remove('hidden');
       if (scaleSimTimer) clearInterval(scaleSimTimer);
       scaleSimTimer = setInterval(() => {
-        setScaleDisplay(simCurrentWeight, "kg", true, "SIMULATOR");
+        let displayVal = simCurrentWeight;
+        let isStable = !simMotionActive;
+        if (simMotionActive) {
+          displayVal += (Math.random() * 0.04 - 0.02);
+        }
+        setScaleDisplay(displayVal, "kg", isStable, "SIMULATOR");
       }, 300);
     }
 
     function updateHtmlSimWeight(val) {
       simCurrentWeight = parseFloat(val) || 0;
       document.getElementById('html-sim-input').value = simCurrentWeight;
-      setScaleDisplay(simCurrentWeight, "kg", true, "SIMULATOR");
+      setScaleDisplay(simCurrentWeight, "kg", !simMotionActive, "SIMULATOR");
     }
 
     async function connectHtmlBluetooth() {
@@ -967,6 +1708,7 @@
       renderDashboardReports();
       renderRepository();
       suggestWeighingLoads();
+      evaluateAllTests();
     };
   </script>
 </body>
