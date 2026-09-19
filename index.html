@@ -1549,13 +1549,13 @@
       let p1 = true, p2 = true;
       if (rep1.length > 0) {
         const spread1 = Math.max(...rep1) - Math.min(...rep1);
-        p1 = spread1 <= 0.015;
+        p1 = spread1 <= 0.015 + 1e-9;
         document.getElementById('rep-status-1').innerText = `${p1?'PASS':'FAIL'} (Spread: ${spread1.toFixed(3)} kg)`;
         document.getElementById('rep-status-1').className = p1 ? 'badge-pass px-2 py-0.5 rounded' : 'badge-fail px-2 py-0.5 rounded';
       }
       if (rep2.length > 0) {
         const spread2 = Math.max(...rep2) - Math.min(...rep2);
-        p2 = spread2 <= 0.015;
+        p2 = spread2 <= 0.015 + 1e-9;
         document.getElementById('rep-status-2').innerText = `${p2?'PASS':'FAIL'} (Spread: ${spread2.toFixed(3)} kg)`;
         document.getElementById('rep-status-2').className = p2 ? 'badge-pass px-2 py-0.5 rounded' : 'badge-fail px-2 py-0.5 rounded';
       }
@@ -1602,7 +1602,7 @@
       const net = parseFloat(document.getElementById('tare-net').value)||0;
       const ind = parseFloat(indVal)||0;
       const err = Math.abs(ind - net);
-      const pass = err <= 0.010;
+      const pass = err <= 0.010 + 1e-9;
 
       document.getElementById('tare-err-calc').innerText = `${(ind-net).toFixed(3)} kg`;
       document.getElementById('tare-status-badge').innerText = pass ? 'PASS' : 'FAIL';
@@ -1627,7 +1627,8 @@
       const base = parseFloat(document.getElementById('disc-base').value)||0;
       const change = ind - base;
 
-      const pass = change >= 0.010;
+      const d = parseFloat(document.getElementById('inp-d')?.value) || 0.01;
+      const pass = change >= d - 1e-9;
       document.getElementById('disc-change-calc').innerText = `${change.toFixed(3)} kg (>= 1d)`;
       document.getElementById('disc-status-badge').innerText = pass ? 'PASS' : 'FAIL';
       document.getElementById('disc-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
@@ -1649,7 +1650,7 @@
       const semiauto = parseFloat(document.getElementById('zero-semiauto').value)||0;
       const err = parseFloat(document.getElementById('zero-err').value)||0;
 
-      const pass = (init <= 20) && (semiauto <= 4) && (Math.abs(err) <= 0.25);
+      const pass = (init <= 20 + 1e-9) && (semiauto <= 4 + 1e-9) && (Math.abs(err) <= 0.25 + 1e-9);
       document.getElementById('zero-status-badge').innerText = pass ? 'PASS (All Clause 4.5 Criteria Met)' : 'FAIL (Range or Accuracy Exceeded)';
       document.getElementById('zero-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
@@ -1672,7 +1673,7 @@
       const w30 = parseFloat(document.getElementById('warm-30').value)||0;
 
       const errs = [w0, w5, w15, w30].map(v => Math.abs(v - 15.00));
-      const pass = Math.max(...errs) <= 0.010;
+      const pass = Math.max(...errs) <= 0.010 + 1e-9;
 
       document.getElementById('warmup-status-badge').innerText = pass ? 'PASS (All intervals within MPE)' : 'FAIL (Drift exceeded MPE)';
       document.getElementById('warmup-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
@@ -1696,7 +1697,7 @@
       const t5 = parseFloat(document.getElementById('temp-5').value)||0;
 
       const errs = [t20, t40, t10, t5].map(v => Math.abs(v - 15.00));
-      const pass = Math.max(...errs) <= 0.015;
+      const pass = Math.max(...errs) <= 0.015 + 1e-9;
 
       document.getElementById('temp-status-badge').innerText = pass ? 'PASS (Thermal coefficient <= 1e/5°C)' : 'FAIL';
       document.getElementById('temp-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
@@ -1719,7 +1720,7 @@
       const v253 = parseFloat(document.getElementById('volt-253').value)||0;
 
       const errs = [v230, v195, v253].map(v => Math.abs(v - 15.00));
-      const pass = Math.max(...errs) <= 0.010;
+      const pass = Math.max(...errs) <= 0.010 + 1e-9;
 
       document.getElementById('voltage-status-badge').innerText = pass ? 'PASS (Errors <= MPE across voltage range)' : 'FAIL';
       document.getElementById('voltage-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
@@ -1741,7 +1742,7 @@
       const avg = spanInputs.reduce((a,b)=>a+b,0) / (spanInputs.length||1);
       const maxDev = Math.max(...spanInputs.map(v => Math.abs(v - avg)));
 
-      const pass = maxDev <= 0.0075;
+      const pass = maxDev <= 0.0075 + 1e-9;
       document.getElementById('span-status-badge').innerText = pass ? `PASS (Max Dev: ${maxDev.toFixed(3)} kg <= 0.5 MPE)` : 'FAIL';
       document.getElementById('span-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
