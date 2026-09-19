@@ -90,9 +90,12 @@
           <h2 class="text-xl font-bold text-slate-900">NAWI Type Evaluation Monitoring Dashboard</h2>
           <p class="text-sm text-slate-500">Automated Compliance Verification as per OIML Recommendation R 76-1:2006 & Legal Metrology Rules, 2011</p>
         </div>
-        <button onclick="createNewReport()" class="bg-teal-700 hover:bg-teal-800 text-white font-medium text-sm px-4 py-2 rounded-lg shadow flex items-center gap-2">
-          <i class="fa-solid fa-plus"></i> Create New NAWI Test Report
-        </button>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            System Ready &bull; OIML R 76-1 Compliant
+          </span>
+        </div>
       </div>
 
       <!-- METRIC CARDS -->
@@ -668,13 +671,13 @@
           <!-- SECTION 9: STATIC TEMPERATURE -->
           <div id="sec-temp" class="test-sec hidden space-y-4">
             <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Static Temperature Test (Clause 3.9.2 / A.5.3)</h3>
-            <p class="text-xs text-slate-500">Testing carried out at reference temperature (20Â°C), upper limit (40Â°C), lower limit (-10Â°C), 5Â°C and 20Â°C return. Zero drift shall not exceed 1e / 5Â°C.</p>
+            <p class="text-xs text-slate-500">Testing carried out at reference temperature (20°C), upper limit (40°C), lower limit (-10°C), 5°C and 20°C return. Zero drift shall not exceed 1e / 5°C.</p>
 
             <div class="overflow-x-auto">
               <table class="w-full text-xs text-left border">
                 <thead class="bg-slate-100 uppercase font-semibold">
                   <tr>
-                    <th class="p-2 border">Chamber Temp (Â°C)</th>
+                    <th class="p-2 border">Chamber Temp (°C)</th>
                     <th class="p-2 border">Test Load (kg)</th>
                     <th class="p-2 border">Indication (kg)</th>
                     <th class="p-2 border">Zero Shift (e)</th>
@@ -683,28 +686,28 @@
                 </thead>
                 <tbody class="divide-y">
                   <tr>
-                    <td class="p-2 border font-bold">20 Â°C (Ref)</td>
+                    <td class="p-2 border font-bold">20 °C (Ref)</td>
                     <td class="p-2 border">15.00 kg</td>
                     <td class="p-2 border"><input type="number" id="temp-20a" placeholder="—" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
                     <td class="p-2 border">0.00e</td>
                     <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
                   </tr>
                   <tr>
-                    <td class="p-2 border font-bold">40 Â°C (Max T)</td>
+                    <td class="p-2 border font-bold">40 °C (Max T)</td>
                     <td class="p-2 border">15.00 kg</td>
                     <td class="p-2 border"><input type="number" id="temp-40" placeholder="—" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
                     <td class="p-2 border">0.20e</td>
                     <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
                   </tr>
                   <tr>
-                    <td class="p-2 border font-bold">-10 Â°C (Min T)</td>
+                    <td class="p-2 border font-bold">-10 °C (Min T)</td>
                     <td class="p-2 border">15.00 kg</td>
                     <td class="p-2 border"><input type="number" id="temp-10" placeholder="—" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
                     <td class="p-2 border">0.30e</td>
                     <td class="p-2 border text-center"><span class="badge-pass px-2 py-0.5 rounded">PASS</span></td>
                   </tr>
                   <tr>
-                    <td class="p-2 border font-bold">5 Â°C</td>
+                    <td class="p-2 border font-bold">5 °C</td>
                     <td class="p-2 border">15.00 kg</td>
                     <td class="p-2 border"><input type="number" id="temp-5" placeholder="—" oninput="evalTemp()" class="w-20 border px-1 text-center"></td>
                     <td class="p-2 border">0.10e</td>
@@ -716,7 +719,7 @@
 
             <div class="p-3 rounded-lg bg-slate-50 border text-xs flex justify-between items-center">
               <span>Temperature Chamber Verdict:</span>
-              <span id="temp-status-badge" class="badge-pass px-2.5 py-1 rounded font-bold">PASS (Thermal coefficient &le; 1e/5Â°C)</span>
+              <span id="temp-status-badge" class="badge-pass px-2.5 py-1 rounded font-bold">PASS (Thermal coefficient &le; 1e/5°C)</span>
             </div>
           </div>
 
@@ -789,7 +792,7 @@
               <span id="ghost-flag-count" class="bg-emerald-200 text-emerald-900 px-2.5 py-0.5 rounded font-mono font-bold">0 Integrity Warnings</span>
             </div>
             <div id="ghost-flag-details" class="text-slate-700">
-              <span class="text-emerald-800 font-semibold">““ Audit Status: Clean dataset. Natural transducer noise and non-zero variation verified across all test points.</span>
+              <span class="text-emerald-800 font-semibold">✔ Audit Status: Clean dataset. Natural transducer noise and non-zero variation verified across all test points.</span>
             </div>
           </div>
 
@@ -876,13 +879,13 @@
 
 
   <!-- DIGITAL SIGNATURE MODAL -->
-  <div id="modal-digital-sign" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 text-slate-900 no-print">
+  <div id="modal-digital-sign" onclick="if(event.target === this) toggleDigitalSignModal()" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 text-slate-900 no-print">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
         <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
           <i class="fa-solid fa-signature text-amber-600"></i> Digital Report Approval (SHA-256)
         </h3>
-        <button onclick="toggleDigitalSignModal()" class="text-slate-400 hover:text-slate-600">“•</button>
+        <button onclick="toggleDigitalSignModal()" class="text-slate-400 hover:text-slate-600 text-base font-bold">✕</button>
       </div>
 
       <div class="space-y-3 text-xs">
@@ -909,14 +912,17 @@
           Apply Cryptographic Signature
         </button>
       </div>
+    </div>
+  </div>
+
   <!-- REGISTER NEW INSTRUMENT & CREATE REPORT MODAL -->
-  <div id="modal-create-report" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 text-slate-900 no-print">
+  <div id="modal-create-report" onclick="if(event.target === this) toggleCreateReportModal()" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 text-slate-900 no-print">
     <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
         <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
           <i class="fa-solid fa-plus-circle text-teal-700"></i> Register New NAWI Instrument & Create Report
         </h3>
-        <button onclick="toggleCreateReportModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+        <button onclick="toggleCreateReportModal()" class="text-slate-400 hover:text-slate-600 text-base font-bold">✕</button>
       </div>
 
       <div class="space-y-3 text-xs">
@@ -974,6 +980,66 @@
         <button onclick="submitCreateReportModal()" class="bg-teal-700 hover:bg-teal-800 text-white font-bold px-4 py-1.5 rounded-lg text-xs shadow flex items-center gap-1.5">
           <i class="fa-solid fa-file-signature"></i> Generate Test Workspace
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEIGHING SCALE HARDWARE / SIMULATOR SETTINGS MODAL -->
+  <div id="html-scale-modal" onclick="if(event.target === this) toggleHtmlScaleModal()" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 text-slate-900 no-print">
+    <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-tower-broadcast text-teal-700"></i> Weighing Indicator / Scale Interface Setup
+        </h3>
+        <button onclick="toggleHtmlScaleModal()" class="text-slate-400 hover:text-slate-600 text-base font-bold">✕</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <p class="text-slate-500">Connect a live digital weighing indicator or initialize the built-in sensor simulator to acquire live test readings.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button onclick="startHtmlScaleSim()" class="p-3 border rounded-xl hover:border-teal-500 hover:bg-teal-50/50 text-left transition flex items-start gap-3">
+            <div class="p-2 bg-amber-100 text-amber-800 rounded-lg text-lg"><i class="fa-solid fa-flask"></i></div>
+            <div>
+              <div class="font-bold text-slate-800 text-xs">Built-in Simulator</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Simulate live weight stream with motion jitter test</div>
+            </div>
+          </button>
+
+          <button onclick="connectHtmlBluetooth()" class="p-3 border rounded-xl hover:border-teal-500 hover:bg-teal-50/50 text-left transition flex items-start gap-3">
+            <div class="p-2 bg-blue-100 text-blue-800 rounded-lg text-lg"><i class="fa-brands fa-bluetooth-b"></i></div>
+            <div>
+              <div class="font-bold text-slate-800 text-xs">Web Bluetooth</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Pair BLE scale indicator via browser Bluetooth API</div>
+            </div>
+          </button>
+
+          <button onclick="connectHtmlSerial()" class="p-3 border rounded-xl hover:border-teal-500 hover:bg-teal-50/50 text-left transition flex items-start gap-3">
+            <div class="p-2 bg-purple-100 text-purple-800 rounded-lg text-lg"><i class="fa-solid fa-microchip"></i></div>
+            <div>
+              <div class="font-bold text-slate-800 text-xs">RS-232 / USB Serial</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Direct COM port reading via Web Serial API</div>
+            </div>
+          </button>
+
+          <div class="p-3 border rounded-xl space-y-2">
+            <div class="flex items-center gap-2">
+              <div class="p-2 bg-emerald-100 text-emerald-800 rounded-lg text-sm"><i class="fa-solid fa-wifi"></i></div>
+              <span class="font-bold text-slate-800 text-xs">TCP/IP Network Scale</span>
+            </div>
+            <div class="flex gap-1.5">
+              <input type="text" id="html-wifi-ip" value="192.168.1.120:4001" placeholder="IP:Port" class="w-full border rounded px-2 py-1 text-xs">
+              <button onclick="connectHtmlWifi()" class="bg-teal-700 text-white text-xs font-bold px-2.5 py-1 rounded hover:bg-teal-800">Connect</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t flex justify-between items-center">
+          <button onclick="disconnectHtmlScale()" class="text-rose-600 hover:text-rose-700 font-bold text-xs flex items-center gap-1">
+            <i class="fa-solid fa-power-off"></i> Disconnect Scale
+          </button>
+          <button onclick="toggleHtmlScaleModal()" class="border rounded px-4 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50">Close</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1322,6 +1388,7 @@
           document.getElementById('modal-mfr').value = '';
           document.getElementById('modal-model').value = '';
           document.getElementById('modal-serial').value = `SN-${Date.now().toString().slice(-6)}`;
+          setTimeout(() => document.getElementById('modal-mfr')?.focus(), 50);
         }
       }
     }
@@ -1631,7 +1698,7 @@
       const errs = [t20, t40, t10, t5].map(v => Math.abs(v - 15.00));
       const pass = Math.max(...errs) <= 0.015;
 
-      document.getElementById('temp-status-badge').innerText = pass ? 'PASS (Thermal coefficient <= 1e/5Â°C)' : 'FAIL';
+      document.getElementById('temp-status-badge').innerText = pass ? 'PASS (Thermal coefficient <= 1e/5°C)' : 'FAIL';
       document.getElementById('temp-status-badge').className = pass ? 'badge-pass px-2.5 py-1 rounded font-bold' : 'badge-fail px-2.5 py-1 rounded font-bold';
 
       const verdict = pass ? 'PASS' : 'FAIL';
@@ -1748,7 +1815,7 @@
           box.className = "p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 space-y-2 text-xs shadow-sm";
           countEl.className = "bg-emerald-200 text-emerald-900 px-2.5 py-0.5 rounded font-mono font-bold";
           countEl.innerText = "0 Integrity Warnings";
-          detailsEl.innerHTML = `<span class="text-emerald-800 font-semibold">““ Audit Status: Clean dataset. Natural transducer noise and non-zero variation verified across all test points.</span>`;
+          detailsEl.innerHTML = `<span class="text-emerald-800 font-semibold">✔ Audit Status: Clean dataset. Natural transducer noise and non-zero variation verified across all test points.</span>`;
         }
       }
 
@@ -2081,6 +2148,18 @@
       renderDashboardReports();
       renderRepository();
       showTab('dashboard');
+
+      // Global keyboard handler for closing modals with Escape key
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          const createModal = document.getElementById('modal-create-report');
+          if (createModal && !createModal.classList.contains('hidden')) toggleCreateReportModal();
+          const signModal = document.getElementById('modal-digital-sign');
+          if (signModal && !signModal.classList.contains('hidden')) toggleDigitalSignModal();
+          const scaleModal = document.getElementById('html-scale-modal');
+          if (scaleModal && !scaleModal.classList.contains('hidden')) toggleHtmlScaleModal();
+        }
+      });
     };
   </script>
 </body>

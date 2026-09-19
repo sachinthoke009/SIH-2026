@@ -32,3 +32,8 @@ next-env.d.ts
 # OS files
 .DS_Store
 Thumbs.db
+*.lnk
+
+# other projects
+agent ai2.0/
+
